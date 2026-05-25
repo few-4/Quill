@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  
+  --color-brand-blue: #3b82f6;
+  --color-brand-pink: #ec4899;
+  --color-brand-green: #10b981;
+  
+  /* Theme-aware semantic variables mapping to CSS properties */
+  --color-theme-bg: var(--bg-primary);
+  --color-theme-card: var(--bg-secondary);
+  --color-theme-metric: var(--bg-tertiary);
+  --color-theme-cta: var(--bg-cta);
+  --color-theme-txt-primary: var(--text-primary);
+  --color-theme-txt-secondary: var(--text-secondary);
+  --color-theme-border: var(--border-color);
+  
+  --color-theme-btn-cta-bg: var(--btn-cta-bg);
+  --color-theme-btn-cta-text: var(--btn-cta-text);
+  --color-theme-btn-sec-border: var(--btn-sec-border);
+  --color-theme-btn-sec-hover: var(--btn-sec-hover);
+  --color-theme-nav-bg: var(--nav-bg);
+  
+  --color-theme-toggle-bg: var(--toggle-btn-bg);
+  --color-theme-toggle-hover: var(--toggle-btn-hover);
+}
