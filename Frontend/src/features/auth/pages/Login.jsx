@@ -3,26 +3,27 @@ import { Link } from "react-router";
 import CollaborativeCursor from "../../../pages/components/Collaborative Cursor";
 import AuthHeader from "../components/AuthHeader";
 import { useForm } from "react-hook-form";
-import { useLogin } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth.js";
 
 const Login = () => {
 
-  const {register, handleSubmit , formState:{errors}, reset} = useForm();
-  const { mutate: loginApi, isPending, isError, error } = useLogin();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [showPassword, setShowPassword] = useState(false);
+  const { handleLogin } = useAuth();
+  const { mutate: loginUser, isError, isPending, error } = handleLogin();
 
   const onSubmit = useCallback((data) => {
-    loginApi({
+    loginUser({
       email: data.email,
       password: data.password
     });
     reset();
-  }, [loginApi, reset]);
+  }, [loginUser, reset]);
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prev) => !prev);
   }, []);
-  
+
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-txt-primary flex flex-col items-center relative font-sans theme-transition duration-300 pt-16">
@@ -59,7 +60,7 @@ const Login = () => {
                 Email Address
               </label>
               <input
-                {...register("email", {required: "Email is required"})}
+                {...register("email", { required: "Email is required" })}
                 id="login-email"
                 type="email"
                 placeholder="name@company.com"
@@ -79,7 +80,7 @@ const Login = () => {
               </div>
               <div className="relative">
                 <input
-                  {...register("password", {required: "Password is required", minLength: {value: 6, message: "Password must be at least 6 characters"}})}
+                  {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })}
                   id="login-password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
@@ -94,8 +95,8 @@ const Login = () => {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-theme-txt-secondary/50 hover:text-theme-txt-secondary flex items-center theme-transition duration-200 bg-transparent border-none cursor-pointer p-0"
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
                   </svg>
                 </button>
               </div>

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { setAccessToken, setLoggedOut } from "../features/auth/auth.slice";
 import store from "./app.store";
-
 const API_BASE_URL = "http://localhost:3000/api";
 
 const api = axios.create({
@@ -46,6 +45,7 @@ api.interceptors.response.use(
         const newAccessToken = response.data?.data?.token;
 
         if (newAccessToken) {
+          console.log("newAccessToken from interceptor", newAccessToken)
           store.dispatch(setAccessToken(newAccessToken));
 
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

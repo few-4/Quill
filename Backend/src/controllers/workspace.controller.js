@@ -23,7 +23,7 @@ export const getAllWorkspaces = asyncHandler(async(req, res)=>{
 
     const workspaces = await workspaceDao.getAllWorkspaces(req.user.userId);
 
-    return new ApiResponse(200, {workspaces}, "Workspaces fetched successfully").send(res);
+    return new ApiResponse(200, workspaces, "Workspaces fetched successfully").send(res);
 })
 
 export const getSingleWorkspace = asyncHandler(async (req, res) => {

@@ -4,14 +4,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import CollaborativeCursor from "../../../pages/components/Collaborative Cursor";
 import AuthHeader from "../components/AuthHeader";
-import { useVerifyOtp } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth.js";
 
 const VerifyOTP = () => {
   const queryClient = useQueryClient();
   
   const email = queryClient.getQueryData(["register-email"]) || "";
 
-  const { mutate: verifyOtp, isPending, isError, error } = useVerifyOtp();
+  const { handleVerifyOTP } = useAuth();
+  const {mutate : verifyOtp, isError, isPending, error} = handleVerifyOTP()
+
+  console.log(verifyOtp)
 
   const [timeLeft, setTimeLeft] = useState(120);
 

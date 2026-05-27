@@ -3,17 +3,18 @@ import { Link } from "react-router";
 import CollaborativeCursor from "../../../pages/components/Collaborative Cursor";
 import AuthHeader from "../components/AuthHeader";
 import { useForm } from "react-hook-form";
-import { useRegister } from "../hooks/useAuth.js";
+import { useAuth } from "../hooks/useAuth.js";
 
 const Register = () => {
 
-  const { mutate: registerApi, isPending, isError, error } = useRegister();
   const [showPassword, setShowPassword] = useState(false);
 
+  const { handleRegister } = useAuth();
+  const { mutate: registerUser, isError, isPending, error } = handleRegister();
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
   const onSubmit = useCallback((data) => {
-    registerApi({
+    registerUser({
       username: data.userName,
       fullname: data.fullName,
       email: data.email,
@@ -21,7 +22,7 @@ const Register = () => {
     });
     console.log(data);
     reset();
-  }, [registerApi, reset]);
+  }, [registerUser, reset]);
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prev) => !prev);

@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
     otpExpiry: Date
 }, { timestamps: true });
 
-// This deletes the document automatically if not verified within 10 mins
 userSchema.index({ createdAt: 1 }, { 
   expireAfterSeconds: 600, 
   partialFilterExpression: { isVerified: false } 
