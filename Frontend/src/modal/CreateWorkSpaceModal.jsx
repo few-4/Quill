@@ -46,8 +46,8 @@ export default function CreateWorkSpaceModal({ isVisible, onClose }) {
             <div className="relative w-full max-w-md bg-theme-card border border-theme-border/80 rounded-2xl p-6 shadow-2xl flex flex-col items-stretch overflow-hidden animate-in zoom-in-95 duration-200">
 
                 {/* Floating background auroral glow */}
-                <div className="absolute -top-[20%] -right-[20%] w-[180px] h-[180px] bg-brand-blue/8 rounded-full blur-[45px] pointer-events-none" />
-                <div className="absolute -bottom-[20%] -left-[20%] w-[180px] h-[180px] bg-brand-pink/8 rounded-full blur-[45px] pointer-events-none" />
+                <div className="absolute top-[-20%] right-[-20%] w-[180px] h-[180px] bg-brand-blue/8 rounded-full blur-[45px] pointer-events-none" />
+                <div className="absolute bottom-[-20%] left-[-20%] w-[180px] h-[180px] bg-brand-pink/8 rounded-full blur-[45px] pointer-events-none" />
 
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-6 relative z-10">
@@ -142,7 +142,7 @@ export default function CreateWorkSpaceModal({ isVisible, onClose }) {
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-blue to-purple-600 hover:opacity-95 text-white font-semibold text-sm shadow-lg shadow-brand-blue/15 hover:shadow-brand-blue/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-5 py-2.5 rounded-xl bg-linear-to-r from-brand-blue to-purple-600 hover:opacity-95 text-white font-semibold text-sm shadow-lg shadow-brand-blue/15 hover:shadow-brand-blue/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isPending ? (
                                 <>
