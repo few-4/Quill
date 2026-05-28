@@ -25,9 +25,14 @@ export const useWorkspace = () => {
   const handleCreateWorkspace = () =>
     useMutation({
       mutationFn: createWorkspaceApi,
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+        dispatch(setCurrentWorkspace(data.data))
+        navigate(`/dashboard/${data.data._id}`)
       },
+      onError: (error) => {
+        console.log(error.response.data.message)
+      }
     });
 
   return { handleWorkspaces, handleCreateWorkspace };

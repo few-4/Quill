@@ -4,6 +4,8 @@ import { Plus, ChevronRight, Sparkles, FolderIcon } from 'lucide-react';
 import { useWorkspace } from '../hooks/useWorkspace';
 import CollaborativeCursor from '../../../pages/components/Collaborative Cursor';
 import CreateWorkSpaceModal from '../../../modal/CreateWorkSpaceModal';
+import { useDispatch } from 'react-redux';
+import { setCurrentWorkspace } from '../workspace.slice';
 
 const gradientPresets = {
   indigo: 'from-indigo-500 to-purple-500 text-white',
@@ -21,12 +23,18 @@ const getWorkspaceColor = (name = "") => {
 
 const Workspaceselect = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { handleWorkspaces } = useWorkspace();
   const { data: { data: workspaces = [] } = {}, isLoading } = handleWorkspaces();
 
+  const handleWorkspaceSelection = (data) => {
+    dispatch(setCurrentWorkspace(data));
+    navigate('/dashboard/' + data._id);
+  }
 
-  return ( 
+
+  return (
     <div className="min-h-screen bg-theme-bg text-theme-txt-primary flex flex-col items-center relative font-sans theme-transition duration-300 overflow-hidden pt-12">
       {/* Background square grid */}
       <div className="grid-lines-bg" />
@@ -79,7 +87,7 @@ const Workspaceselect = () => {
                 return (
                   <div
                     key={ws._id || ws.id}
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => handleWorkspaceSelection(ws)}
                     className="group relative flex items-start gap-4 p-5 rounded-2xl bg-theme-card/65 border border-theme-border/80 backdrop-blur-md cursor-pointer hover:border-theme-txt-secondary/30 hover:bg-theme-card/90 hover:translate-y-[-2px] transition-all duration-300 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] select-none animate-in fade-in-50 slide-in-from-bottom-2"
                   >
                     {/* Glowing dynamic background highlight on hover */}

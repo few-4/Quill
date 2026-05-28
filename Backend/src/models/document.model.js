@@ -10,7 +10,7 @@ const documentSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["text", "excalidraw"],
+      enum: ["text", "visual"],
       required: true,
     },
     workspaceId: {

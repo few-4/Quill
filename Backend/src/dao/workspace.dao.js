@@ -44,7 +44,7 @@ export const getWorkspaceById = async (workspaceId, userId) => {
             { members: userId }
         ]
     })
-    .populate("owner", "username")
+    .populate("owner", "username email")
     .select("name description owner members visibility inviteCode createdAt")
     .lean();
     return workspace;

@@ -44,28 +44,42 @@ const router = createBrowserRouter([
     Component: Workspaceselect,
     loader: workspaceLoader
   },
+  // {
+  //   path: "/dashboard/:workspaceId",
+  //   Component: Dashboard,
+  //   children: [
+  //     {
+  //       index: true,
+  //       Component: DashboardHome
+  //     }
+  //   ]
+  // }
   {
-    path: "dashboard",
     Component: Dashboard,
     children: [
       {
         index: true,
+        path: "/dashboard/:workspaceId",
         Component: DashboardHome,
       },
       {
-        path: "documents",
+        path: "/documents/:workspaceId",
         Component: Documents,
       },
       {
-        path: "team-spaces",
+        path: "/document/:documentId",
+        Component: DocumentPage
+      },
+      {
+        path: "/team-spaces/:workspaceId",
         Component: TeamSpaces,
       },
       {
-        path: "templates",
+        path: "/templates/:workspaceId",
         Component: Templates,
       },
       {
-        path: "settings",
+        path: "/settings/:workspaceId",
         Component: Settings,
       },
     ],

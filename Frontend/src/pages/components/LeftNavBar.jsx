@@ -12,15 +12,18 @@ import {
   MoreHorizontal, 
   LogOut
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const LeftNavBar = () => {
-  // Navigation Links mock items
+
+  const currentWorkspace = useSelector((state) => state.dashboard.workspace);
+  
   const navItems = [
-    { label: "Dashboard", icon: LayoutDashboard, to: "/dashboard" },
-    { label: "Documents", icon: FileText, to: "/dashboard/documents" },
-    { label: "Team Spaces", icon: Users, to: "/dashboard/team-spaces" },
-    { label: "Templates", icon: Sparkles, to: "/dashboard/templates" },
-    { label: "Settings", icon: Settings, to: "/dashboard/settings" },
+    { label: "Dashboard", icon: LayoutDashboard, to: `/dashboard/${currentWorkspace?._id}` },
+    { label: "Documents", icon: FileText, to: `/documents/${currentWorkspace?._id}` },
+    { label: "Team Spaces", icon: Users, to: `/team-spaces/${currentWorkspace?._id}` },
+    { label: "Templates", icon: Sparkles, to: `/templates/${currentWorkspace?._id}` },
+    { label: "Settings", icon: Settings, to: `/settings/${currentWorkspace?._id}` },
   ];
 
   // Recent/Favorite pages mock items
@@ -38,6 +41,10 @@ const LeftNavBar = () => {
     { name: "Marketing", color: "bg-brand-green" },
   ];
 
+  if(!currentWorkspace){
+    return <div className="flex justify-center items-center h-screen w-screen"><p className="text-theme-txt-primary text-lg">Loading...</p></div>
+  }
+
   return (
     <aside className="h-full w-1/7 min-w-[240px] bg-theme-card border-r border-theme-border flex flex-col justify-between theme-transition duration-300 font-sans relative z-20">
       
@@ -52,14 +59,13 @@ const LeftNavBar = () => {
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold text-theme-txt-primary truncate leading-tight tracking-tight">
-                Quill HQ
+                {currentWorkspace?.name}
               </span>
               <span className="text-[10px] text-theme-txt-secondary/60 truncate leading-none mt-0.5">
-                Free Plan
               </span>
             </div>
           </div>
-          <ChevronDown className="w-4 h-4 text-theme-txt-secondary/60 flex-shrink-0" />
+          <ChevronDown className="w-4 h-4 text-theme-txt-secondary/60 shrink-0" />
         </div>
 
         {/* Search Bar Trigger */}
@@ -92,7 +98,7 @@ const LeftNavBar = () => {
                     {isActive && (
                       <span className="absolute left-1 w-1 h-5 rounded-full bg-brand-blue" />
                     )}
-                    <Icon className={`w-4 h-4 flex-shrink-0 theme-transition ${
+                    <Icon className={`w-4 h-4 shrink-0 theme-transition ${
                       isActive ? "text-brand-blue" : "text-theme-txt-secondary/70 group-hover:text-theme-txt-primary"
                     }`} />
                     <span className="truncate">{item.label}</span>
@@ -144,7 +150,7 @@ const LeftNavBar = () => {
         <div className="flex items-center justify-between p-1.5 rounded-xl hover:bg-theme-btn-sec-hover theme-transition duration-200 cursor-pointer">
           <div className="flex items-center gap-2.5 min-w-0">
             {/* Avatar with active indicator */}
-            <div className="relative flex-shrink-0">
+            <div className="relative shrink-0">
               <div className="w-8 h-8 rounded-full bg-brand-pink text-white flex items-center justify-center font-semibold text-xs leading-none">
                 D
               </div>
@@ -153,10 +159,10 @@ const LeftNavBar = () => {
             {/* User Info */}
             <div className="flex flex-col min-w-0">
               <span className="text-xs font-semibold text-theme-txt-primary truncate leading-tight">
-                Quill User
+                {currentWorkspace?.owner?.username}
               </span>
               <span className="text-[10px] text-theme-txt-secondary/60 truncate leading-none mt-0.5">
-                Quill Email
+                {currentWorkspace?.owner?.email}
               </span>
             </div>
           </div>

@@ -26,7 +26,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log("error from interceptor", error);
 
     const originalRequest = error.config;
 
@@ -45,7 +44,6 @@ api.interceptors.response.use(
         const newAccessToken = response.data?.data?.token;
 
         if (newAccessToken) {
-          console.log("newAccessToken from interceptor", newAccessToken)
           store.dispatch(setAccessToken(newAccessToken));
 
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

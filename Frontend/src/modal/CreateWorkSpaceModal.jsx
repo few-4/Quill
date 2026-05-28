@@ -142,7 +142,7 @@ export default function CreateWorkSpaceModal({ isVisible, onClose }) {
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="px-5 py-2.5 rounded-xl bg-linear-to-r from-brand-blue to-purple-600 hover:opacity-95 text-white font-semibold text-sm shadow-lg shadow-brand-blue/15 hover:shadow-brand-blue/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-5 py-2.5 rounded-xl bg-blue-600 hover:opacity-95 text-white font-semibold text-sm shadow-lg shadow-blue-600/15 hover:shadow-blue-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isPending ? (
                                 <>

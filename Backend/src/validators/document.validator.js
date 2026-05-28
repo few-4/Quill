@@ -25,7 +25,7 @@ export const createDocumentValidator = [
         .notEmpty().withMessage("Document type is required")
         .isString().withMessage("Document type must be a string")
         .custom((value) => {
-            const allowedTypes = ["text", "excalidraw"];
+            const allowedTypes = ["text", "visual"];
             if (!allowedTypes.includes(value)) {
                 throw new Error("Invalid document type. Only 'text' or 'excalidraw' are allowed.");
             }

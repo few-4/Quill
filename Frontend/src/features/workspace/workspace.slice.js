@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const workSpaceSlice = createSlice({
     name: 'workspace',
     initialState: {
-        currentWorkspace: null || [] // can be a workspace object or an array of workspace objects
+        currentWorkspace: null || {},
     },
     reducers: {
         setCurrentWorkspace: (state, action) => {

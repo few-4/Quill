@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   FileText, 
   Palette, 
   Plus, 
   Clock
 } from "lucide-react";
+import CreateDocumentModal from "../../../modal/createDocumentModal";
 
 const DashboardHome = () => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  const handleNewDocument = () => {
+    setIsVisible(true);
+  }
+
   return (
     <div className="p-8 md:p-10 w-full h-full flex flex-col relative z-10">
       
@@ -23,7 +30,7 @@ const DashboardHome = () => {
         
         {/* Header Action Buttons */}
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-theme-btn-cta-bg text-theme-btn-cta-text text-sm font-semibold tracking-tight hover:opacity-90 active:scale-[0.98] theme-transition shadow-sm cursor-pointer border-none">
+          <button onClick={handleNewDocument} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-theme-btn-cta-bg text-theme-btn-cta-text text-sm font-semibold tracking-tight hover:opacity-90 active:scale-[0.98] theme-transition shadow-sm cursor-pointer border-none">
             <Plus className="w-4 h-4" />
             <span>New Document</span>
           </button>
@@ -84,7 +91,7 @@ const DashboardHome = () => {
                 🚀 Quill Launch Roadmap 2026
               </h3>
             </div>
-            <div className="p-3.5 rounded-xl bg-brand-blue/10 text-brand-blue flex-shrink-0 ml-4">
+            <div className="p-3.5 rounded-xl bg-brand-blue/10 text-brand-blue shrink-0 ml-4">
               <FileText className="w-6 h-6" />
             </div>
           </div>
@@ -111,7 +118,7 @@ const DashboardHome = () => {
                 🎨 System Architecture Wireframe
               </h3>
             </div>
-            <div className="p-3.5 rounded-xl bg-brand-pink/10 text-brand-pink flex-shrink-0 ml-4">
+            <div className="p-3.5 rounded-xl bg-brand-pink/10 text-brand-pink shrink-0 ml-4">
               <Palette className="w-6 h-6" />
             </div>
           </div>
@@ -126,9 +133,9 @@ const DashboardHome = () => {
             </span>
           </div>
         </div>
-
+        
       </div>
-
+      {isVisible && <CreateDocumentModal isModalOpen={isVisible} onClose={() => setIsVisible(false)} />}
     </div>
   );
 };
