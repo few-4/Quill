@@ -23,6 +23,8 @@ const DocumentPage = () => {
 
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  // Map of socketId → { socketId, userId, username, color, from, to, x, y, button }
+  const [remoteCursors, setRemoteCursors] = useState({});
   const saveTimeoutRef = useRef(null);
   const hasInitializedMode = useRef(null);
 
@@ -52,6 +54,16 @@ const DocumentPage = () => {
         }
       });
       setOnlineUsers(uniqueUsers);
+
+      // Remove cursors for users that are no longer in the room
+      setRemoteCursors((prev) => {
+        const socketIds = new Set(users.map((u) => u.socketId));
+        const next = { ...prev };
+        Object.keys(next).forEach((sid) => {
+          if (!socketIds.has(sid)) delete next[sid];
+        });
+        return next;
+      });
     });
 
     // Listen for collaborative document updates from other users in real time
@@ -75,6 +87,14 @@ const DocumentPage = () => {
         if (!oldData) return oldData;
         return { ...oldData, title };
       });
+    });
+
+    // Track remote collaborator cursors in real time
+    newSocket.on("remote-cursor", (cursorData) => {
+      setRemoteCursors((prev) => ({
+        ...prev,
+        [cursorData.socketId]: cursorData,
+      }));
     });
 
     return () => {
@@ -179,9 +199,21 @@ const DocumentPage = () => {
       {/* Editor */}
       <main className="flex-1 w-full max-w-4xl mx-auto p-6 z-10">
         {isVisualMode ? (
-          <VisualEditor content={document?.visualContent} onChange={handleContentChange} />
+          <VisualEditor
+            content={document?.visualContent}
+            onChange={handleContentChange}
+            socket={socket}
+            currentUser={currentUser}
+            remoteCursors={remoteCursors}
+          />
         ) : (
-          <TipTapEditor content={document?.textContent} onChange={handleContentChange} />
+          <TipTapEditor
+            content={document?.textContent}
+            onChange={handleContentChange}
+            socket={socket}
+            currentUser={currentUser}
+            remoteCursors={remoteCursors}
+          />
         )}
       </main>
     </div>

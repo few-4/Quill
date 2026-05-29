@@ -73,6 +73,40 @@ export const initializeSocket = (server) => {
             socket.on("rename-document", ({ title }) => {
                 socket.to(documentId).emit("document-renamed", { title });
             });
+
+            // Relay real-time cursor / pointer positions to all other collaborators in the room
+            socket.on("cursor-move", ({ from, to, x, y, button }) => {
+                const CURSOR_PALETTE = [
+                    "#3b82f6", // blue
+                    "#ec4899", // pink
+                    "#10b981", // emerald
+                    "#f59e0b", // amber
+                    "#8b5cf6", // violet
+                    "#ef4444", // red
+                    "#06b6d4", // cyan
+                    "#f97316", // orange
+                    "#84cc16", // lime
+                    "#6366f1", // indigo
+                ];
+                const userId = socket.user?.userId || socket.user?.id || "";
+                // Derive a stable color from the user's id string
+                const colorIndex = [...userId].reduce((acc, c) => acc + c.charCodeAt(0), 0) % CURSOR_PALETTE.length;
+                const color = CURSOR_PALETTE[colorIndex];
+
+                socket.to(documentId).emit("remote-cursor", {
+                    socketId: socket.id,
+                    userId,
+                    username: socket.user?.username || "Unknown",
+                    color,
+                    // Text editor fields
+                    from,
+                    to,
+                    // Canvas editor fields
+                    x,
+                    y,
+                    button,
+                });
+            });
         });
 
         socket.on("leave-document", ({ documentId }) => {

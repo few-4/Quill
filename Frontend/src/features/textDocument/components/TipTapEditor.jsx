@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, Extension } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { Plugin, PluginKey } from '@tiptap/pm/state'
+import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { 
   Bold, 
   Italic, 
@@ -15,9 +17,118 @@ import {
   Redo2 
 } from 'lucide-react'
 
-const TipTapEditor = ({ content = null, onChange }) => {
+// ─── Remote Cursor Decoration Plugin ────────────────────────────────────────
+const REMOTE_CURSOR_KEY = new PluginKey('remoteCursors');
+
+/**
+ * Creates a ProseMirror plugin that renders colored caret lines + name labels
+ * for each remote collaborator based on the externally managed cursor map.
+ */
+function createRemoteCursorPlugin(getCursors) {
+  return new Plugin({
+    key: REMOTE_CURSOR_KEY,
+    props: {
+      decorations(state) {
+        const cursors = getCursors();
+        if (!cursors || Object.keys(cursors).length === 0) return DecorationSet.empty;
+
+        const decorations = [];
+        const docSize = state.doc.content.size;
+
+        Object.values(cursors).forEach((cursor) => {
+          const { from, to, color, username } = cursor;
+          if (from == null || from < 0 || from > docSize) return;
+
+          const clampedFrom = Math.min(Math.max(from, 0), docSize);
+          const clampedTo   = Math.min(Math.max(to ?? from, 0), docSize);
+
+          // ── Caret widget at `from` position ──
+          const caretEl = window.document.createElement('span');
+          caretEl.className = 'remote-cursor-caret';
+          caretEl.style.cssText = `
+            display: inline-block;
+            position: relative;
+            border-left: 2px solid ${color};
+            height: 1.2em;
+            margin-left: -1px;
+            vertical-align: text-bottom;
+            pointer-events: none;
+            z-index: 50;
+          `;
+
+          // Name label above caret
+          const labelEl = window.document.createElement('span');
+          labelEl.className = 'remote-cursor-label';
+          labelEl.textContent = username || '?';
+          labelEl.style.cssText = `
+            position: absolute;
+            top: -1.5em;
+            left: 0;
+            background: ${color};
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: Inter, sans-serif;
+            white-space: nowrap;
+            padding: 1px 5px;
+            border-radius: 4px 4px 4px 0;
+            line-height: 1.6;
+            pointer-events: none;
+            z-index: 51;
+            letter-spacing: 0.02em;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+          `;
+          caretEl.appendChild(labelEl);
+
+          decorations.push(
+            Decoration.widget(clampedFrom, caretEl, { side: -1, key: `caret-${cursor.socketId}` })
+          );
+
+          // ── Selection highlight between from → to ──
+          if (clampedTo > clampedFrom) {
+            decorations.push(
+              Decoration.inline(clampedFrom, clampedTo, {
+                style: `background: ${color}26; border-radius: 2px;`,
+                class: 'remote-cursor-selection',
+              }, { key: `sel-${cursor.socketId}` })
+            );
+          }
+        });
+
+        return DecorationSet.create(state.doc, decorations);
+      },
+    },
+  });
+}
+
+/**
+ * TipTap Extension that wires the ProseMirror remote-cursor plugin to the
+ * editor. The extension holds a mutable ref to the latest cursor map so the
+ * plugin can always read fresh data without being re-created.
+ */
+const RemoteCursorExtension = Extension.create({
+  name: 'remoteCursors',
+
+  addOptions() {
+    return { getCursors: () => ({}) };
+  },
+
+  addProseMirrorPlugins() {
+    return [createRemoteCursorPlugin(this.options.getCursors)];
+  },
+});
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCursors = {} }) => {
   const [, forceUpdate] = useState(0);
   const hasInitializedRef = useRef(false);
+  const remoteCursorsRef = useRef(remoteCursors);
+
+  // Keep the ref always in sync so the plugin closure reads the latest cursors
+  useEffect(() => {
+    remoteCursorsRef.current = remoteCursors;
+  }, [remoteCursors]);
 
   const defaultJSONContent = {
     type: 'doc',
@@ -36,6 +147,9 @@ const TipTapEditor = ({ content = null, onChange }) => {
           levels: [1, 2, 3],
         },
       }),
+      RemoteCursorExtension.configure({
+        getCursors: () => remoteCursorsRef.current,
+      }),
     ],
     content: content || defaultJSONContent,
     editorProps: {
@@ -48,7 +162,20 @@ const TipTapEditor = ({ content = null, onChange }) => {
         onChange(editor.getJSON());
       }
     },
+    onSelectionUpdate: ({ editor }) => {
+      if (!socket) return;
+      const { from, to } = editor.state.selection;
+      socket.emit('cursor-move', { from, to });
+    },
   });
+
+  // Force re-render when remoteCursors change so decorations get repainted
+  useEffect(() => {
+    if (!editor) return;
+    // Trigger a no-op transaction to force decoration re-evaluation
+    editor.view.updateState(editor.view.state);
+    forceUpdate(n => n + 1);
+  }, [remoteCursors, editor]);
 
   // Structural synchronization of remote collaborative JSON updates while preserving selection
   useEffect(() => {
@@ -175,6 +302,7 @@ const TipTapEditor = ({ content = null, onChange }) => {
           min-height: 450px;
           width: 100%;
           padding: 1.5rem;
+          position: relative;
         }
         .ProseMirror h1 {
           font-size: 2.25rem;
@@ -249,6 +377,14 @@ const TipTapEditor = ({ content = null, onChange }) => {
           font-family: monospace;
           margin: 1rem 0;
           overflow-x: auto;
+        }
+        /* Ensure remote cursor carets have correct stacking */
+        .remote-cursor-caret {
+          animation: cursor-blink 1.1s ease-in-out infinite;
+        }
+        @keyframes cursor-blink {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.4; }
         }
       `}</style>
 

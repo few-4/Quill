@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Excalidraw, MainMenu, WelcomeScreen } from "@excalidraw/excalidraw";
 import "@excalidraw/excalidraw/index.css";
 
-const VisualEditor = ({ content = [], onChange }) => {
+const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCursors = {} }) => {
   const [theme, setTheme] = useState("dark");
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
   const isInitializedRef = useRef(false);
@@ -54,6 +54,22 @@ const VisualEditor = ({ content = [], onChange }) => {
     }
   }, [excalidrawAPI, content]);
 
+  // Build the Excalidraw collaborators Map from remoteCursors
+  // Excalidraw expects: Map<string, { pointer: {x,y}, button: 'up'|'down', username, color: {background, stroke} }>
+  const collaboratorsMap = new Map();
+  Object.values(remoteCursors).forEach((cursor) => {
+    if (cursor.x == null || cursor.y == null) return;
+    collaboratorsMap.set(cursor.socketId, {
+      pointer: { x: cursor.x, y: cursor.y },
+      button: cursor.button || 'up',
+      username: cursor.username || 'User',
+      color: {
+        background: cursor.color || '#3b82f6',
+        stroke: cursor.color || '#3b82f6',
+      },
+    });
+  });
+
   const handleCanvasChange = (elements) => {
     const currentElements = Array.isArray(elements) ? elements : [];
     
@@ -72,6 +88,16 @@ const VisualEditor = ({ content = [], onChange }) => {
         onChange(currentElements);
       }
     }
+  };
+
+  // Emit pointer position to collaborators via socket
+  const handlePointerUpdate = ({ pointer, button }) => {
+    if (!socket || !pointer) return;
+    socket.emit('cursor-move', {
+      x: pointer.x,
+      y: pointer.y,
+      button: button || 'up',
+    });
   };
 
   return (
@@ -99,6 +125,8 @@ const VisualEditor = ({ content = [], onChange }) => {
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         theme={theme}
         onChange={handleCanvasChange}
+        onPointerUpdate={handlePointerUpdate}
+        collaborators={collaboratorsMap}
         initialData={{
           elements: Array.isArray(content) ? content : [],
           appState: { theme }
