@@ -5,9 +5,20 @@ import { getActiveUsersInRoom } from "./activeSocket.js";
 import { checkWorkSpaceMember } from "../dao/workspace.dao.js";
 
 export const initializeSocket = (server) => {
+    const allowedOrigins = process.env.CORS_ORIGIN
+        ? process.env.CORS_ORIGIN.split(",").map(o => o.trim().replace(/\/$/, ""))
+        : ["http://localhost:5173"];
+
     const io = new Server(server, {
         cors: {
-            origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+            origin: (origin, callback) => {
+                const cleanOrigin = origin ? origin.replace(/\/$/, "") : "";
+                if (!origin || cleanOrigin.endsWith(".vercel.app") || allowedOrigins.includes(cleanOrigin)) {
+                    callback(null, true);
+                } else {
+                    callback(new Error("Not allowed by CORS"));
+                }
+            },
             methods: ["GET", "POST"],
             credentials: true,
         }

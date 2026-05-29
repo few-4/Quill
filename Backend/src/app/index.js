@@ -13,8 +13,19 @@ import http from "http"
 const app = express();
 const server = http.createServer(app);
 
+const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(",").map(o => o.trim().replace(/\/$/, ""))
+    : ["http://localhost:5173"];
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: (origin, callback) => {
+        const cleanOrigin = origin ? origin.replace(/\/$/, "") : "";
+        if (!origin || cleanOrigin.endsWith(".vercel.app") || allowedOrigins.includes(cleanOrigin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true,
 }));
 
