@@ -24,6 +24,7 @@ const DocumentPage = () => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const saveTimeoutRef = useRef(null);
+  const hasInitializedMode = useRef(null);
 
   // Initialize socket connection & join document room
   useEffect(() => {
@@ -77,10 +78,11 @@ const DocumentPage = () => {
 
   // Synchronize the default mode according to document's type on first load
   useEffect(() => {
-    if (document) {
+    if (document && hasInitializedMode.current !== documentId) {
       setIsVisualMode(document.type === "visual" || document.type === "excalidraw");
+      hasInitializedMode.current = documentId;
     }
-  }, [document]);
+  }, [document, documentId]);
 
   // Debounced save-document handler with dynamic delays (150ms for ultra-responsive Canvas drawing, 1000ms for text)
   const handleContentChange = (newContent) => {
