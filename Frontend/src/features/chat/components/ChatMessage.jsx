@@ -41,7 +41,7 @@ const ChatMessage = ({ message, isOwn, grouped = false }) => {
             {isOptimistic ? "Sending…" : timeLabel(message.createdAt)}
           </span>
           <div
-            className={`px-4 py-2.5 rounded-2xl rounded-br-sm text-sm leading-relaxed break-words bg-brand-blue text-white shadow-sm ${
+            className={`px-4 py-2.5 rounded-2xl rounded-br-sm text-sm leading-relaxed wrap-break-word bg-brand-blue text-white shadow-sm ${
               isOptimistic ? "opacity-60" : "opacity-100"
             } theme-transition`}
           >
@@ -67,7 +67,7 @@ const ChatMessage = ({ message, isOwn, grouped = false }) => {
             </span>
           </div>
         )}
-        <div className="px-4 py-2.5 rounded-2xl rounded-tl-sm bg-theme-card border border-theme-border text-sm text-theme-txt-primary leading-relaxed break-words shadow-xs theme-transition">
+        <div className="px-4 py-2.5 rounded-2xl rounded-tl-sm bg-theme-card border border-theme-border text-sm text-theme-txt-primary leading-relaxed wrap-break-word shadow-xs theme-transition">
           {message.content}
         </div>
       </div>
