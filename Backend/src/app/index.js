@@ -17,7 +17,7 @@ const allowedOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(",").map(o => o.trim().replace(/\/$/, ""))
     : ["http://localhost:5173"];
 
-app.use(cors({
+const corsOptions = {
     origin: (origin, callback) => {
         const cleanOrigin = origin ? origin.replace(/\/$/, "") : "";
         if (!origin || cleanOrigin.endsWith(".vercel.app") || allowedOrigins.includes(cleanOrigin)) {
@@ -27,9 +27,13 @@ app.use(cors({
         }
     },
     credentials: true,
-}));
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-// Middleware for logging HTTP requests
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 app.use(morgan("dev"));
 
 // Middleware for parsing JSON request bodies

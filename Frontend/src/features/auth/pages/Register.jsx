@@ -19,9 +19,9 @@ const Register = () => {
       fullname: data.fullName,
       email: data.email,
       password: data.password
+    }, {
+      onSuccess: () => reset(),
     });
-    console.log(data);
-    reset();
   }, [registerUser, reset]);
 
   const togglePasswordVisibility = useCallback(() => {

@@ -21,7 +21,7 @@ const input = [
 
 input.map(({name, value}) => {
     if (!value) {
-        console.log(`${name} is not defined`);
+        console.error(`[Config] Missing required environment variable: ${name}`);
         process.exit(1);
     }
 })

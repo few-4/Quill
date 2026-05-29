@@ -27,6 +27,14 @@ const DocumentPage = () => {
   const [remoteCursors, setRemoteCursors] = useState({});
   const saveTimeoutRef = useRef(null);
   const hasInitializedMode = useRef(null);
+  // Track the last time the local user made an edit so we can defer remote
+  // content updates that would otherwise overwrite in-progress typing
+  const lastLocalEditTimeRef = useRef(0);
+  const pendingRemoteUpdateRef = useRef(null);
+  const pendingUpdateTimerRef = useRef(null);
+  // How long (ms) to defer a remote update while the user is actively editing.
+  // Matches the text-editor debounce (1 s) + small buffer.
+  const TEXT_EDIT_WINDOW_MS = 1200;
 
   // Initialize socket connection & join document room
   useEffect(() => {
@@ -70,16 +78,41 @@ const DocumentPage = () => {
     newSocket.on("document-updated", ({ textContent, visualContent, yDocState, type, senderSocketId }) => {
       if (senderSocketId === newSocket.id) return;
 
-      // Dynamically update the React Query cache to stream live edits to all listeners
-      queryClient.setQueryData(["document", documentId], (oldData) => {
-        if (!oldData) return oldData;
-        const newData = { ...oldData };
-        if (textContent !== undefined) newData.textContent = textContent;
-        if (visualContent !== undefined) newData.visualContent = visualContent;
-        if (yDocState !== undefined) newData.yDocState = yDocState;
-        if (type !== undefined) newData.type = type;
-        return newData;
-      });
+      const applyRemoteUpdate = (tc, vc, yds, t) => {
+        queryClient.setQueryData(["document", documentId], (oldData) => {
+          if (!oldData) return oldData;
+          const newData = { ...oldData };
+          if (tc !== undefined) newData.textContent = tc;
+          if (vc !== undefined) newData.visualContent = vc;
+          if (yds !== undefined) newData.yDocState = yds;
+          if (t !== undefined) newData.type = t;
+          return newData;
+        });
+      };
+
+      // For the visual canvas, apply immediately (drawing doesn't have a typing window)
+      // For text edits, defer if the local user is mid-keystroke to prevent their
+      // in-progress text from being overwritten by the remote setContent call.
+      const isTextUpdate = textContent !== undefined;
+      const timeSinceLocalEdit = Date.now() - lastLocalEditTimeRef.current;
+
+      if (isTextUpdate && timeSinceLocalEdit < TEXT_EDIT_WINDOW_MS) {
+        // Queue this update — overwrite any older pending one (last-remote-wins while deferred)
+        pendingRemoteUpdateRef.current = { textContent, visualContent, yDocState, type };
+
+        if (pendingUpdateTimerRef.current) clearTimeout(pendingUpdateTimerRef.current);
+        // Apply after the user's edit window expires
+        pendingUpdateTimerRef.current = setTimeout(() => {
+          const pending = pendingRemoteUpdateRef.current;
+          if (pending) {
+            pendingRemoteUpdateRef.current = null;
+            applyRemoteUpdate(pending.textContent, pending.visualContent, pending.yDocState, pending.type);
+          }
+        }, TEXT_EDIT_WINDOW_MS - timeSinceLocalEdit);
+      } else {
+        // Safe to apply immediately (visual canvas, or user hasn't typed recently)
+        applyRemoteUpdate(textContent, visualContent, yDocState, type);
+      }
     });
 
     newSocket.on("document-renamed", ({ title }) => {
@@ -113,6 +146,16 @@ const DocumentPage = () => {
 
   // Debounced save-document handler with dynamic delays (150ms for ultra-responsive Canvas drawing, 1000ms for text)
   const handleContentChange = (newContent) => {
+    // Stamp the edit time so the remote-update gate knows the user is actively typing
+    if (!isVisualMode) {
+      lastLocalEditTimeRef.current = Date.now();
+      // Cancel any pending deferred remote update — our local version is now the truth
+      if (pendingUpdateTimerRef.current) {
+        clearTimeout(pendingUpdateTimerRef.current);
+        pendingRemoteUpdateRef.current = null;
+      }
+    }
+
     // Update local React Query cache immediately to prevent stale states and feedback loops
     queryClient.setQueryData(["document", documentId], (oldData) => {
       if (!oldData) return oldData;
@@ -172,11 +215,14 @@ const DocumentPage = () => {
     }
   };
 
-  // Clean timeout on unmount
+  // Clean timeouts on unmount
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
+      }
+      if (pendingUpdateTimerRef.current) {
+        clearTimeout(pendingUpdateTimerRef.current);
       }
     };
   }, []);

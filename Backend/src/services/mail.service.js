@@ -50,10 +50,8 @@ export const sendOTPEmail = async (email, otp) => {
 
         try {
             const info = await transporter.sendMail(mailOptions);
-            console.log("Email sent: ", info.messageId);
-            return true;
-        } catch(error) {
-            console.error("Email Error: ", error);
+            return !!info.messageId;
+        } catch {
             return false;
         }
 
@@ -108,10 +106,8 @@ export const sendPasswordResetEmail = async (email, otp) => {
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log("Password reset email sent: ", info.messageId);
-        return true;
-    } catch(error) {
-        console.error("Password reset email Error: ", error);
+        return !!info.messageId;
+    } catch {
         return false;
     }
 }

@@ -4,9 +4,9 @@ import config from "./config.js";
 async function connectToDB () {
     try{
         await mongoose.connect(config.MONGO_URI)
-        console.log("DB connected")
     }catch(error){
-        console.log(error)
+        console.error("DB connection failed:", error.message);
+        process.exit(1);
     }
 }
 

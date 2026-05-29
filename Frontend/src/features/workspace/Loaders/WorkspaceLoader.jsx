@@ -6,8 +6,7 @@ export async function workspaceLoader() {
   try {
     const responseData = await fetchWorkspaces();
     return { workspaces: responseData?.data?.workspaces || [] };
-  } catch (error) {
-    console.error("Workspace loading error:", error);
+  } catch {
     return { workspaces: [] };
   }
 }

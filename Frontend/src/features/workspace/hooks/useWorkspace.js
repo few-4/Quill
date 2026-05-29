@@ -92,9 +92,7 @@ export const useWorkspace = () => {
         dispatch(setCurrentWorkspace(data.data));
         navigate(`/dashboard/${data.data._id}`);
       },
-      onError: (error) => {
-        console.log(error.response?.data?.message || error.message);
-      },
+      onError: () => {},
     });
 
   const handleJoinWorkspace = () =>
@@ -105,9 +103,7 @@ export const useWorkspace = () => {
         dispatch(setCurrentWorkspace(data.data));
         navigate(`/dashboard/${data.data._id}`);
       },
-      onError: (error) => {
-        console.log(error.response?.data?.message || error.message);
-      },
+      onError: () => {},
     });
 
   return { handleWorkspaces, handleCreateWorkspace, handleJoinWorkspace };

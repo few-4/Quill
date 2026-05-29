@@ -46,11 +46,9 @@ export const initializeSocket = (server) => {
     });
 
     io.on("connection", (socket) => {
-        console.log(`🔌 User connected: ${socket.user?.username || "Unknown"} (Socket ID: ${socket.id})`);
 
         socket.on("join-document", ({ documentId }) => {
             socket.join(documentId);
-            console.log(`🔌 User ${socket.user?.username} has entered Document Room: ${documentId}`);
 
             const users = getActiveUsersInRoom(io, documentId);
             io.to(documentId).emit("room-users", { documentId, users });
@@ -63,7 +61,6 @@ export const initializeSocket = (server) => {
                         throw new Error("Document not found or could not be saved");
                     }
 
-                    console.log(`✅ Document Saved: ${documentId}`);
                     socket.to(documentId).emit("document-updated", { textContent, visualContent, yDocState, type, senderSocketId: socket.id });
                 } catch (error) {
                     console.error(`❌ Error saving document ${documentId}:`, error);
@@ -111,7 +108,6 @@ export const initializeSocket = (server) => {
 
         socket.on("leave-document", ({ documentId }) => {
             socket.leave(documentId);
-            console.log(`🚫 User ${socket.user?.username} left Document Room: ${documentId}`);
 
             const users = getActiveUsersInRoom(io, documentId);
             io.to(documentId).emit("room-users", { documentId, users });
@@ -129,7 +125,6 @@ export const initializeSocket = (server) => {
 
                 const chatRoom = `chat:${workspaceId}`;
                 socket.join(chatRoom);
-                console.log(`💬 User ${socket.user?.username} joined chat room: ${chatRoom}`);
 
                 const users = getActiveUsersInRoom(io, chatRoom);
                 io.to(chatRoom).emit("chat-users", { workspaceId, users });
@@ -146,7 +141,6 @@ export const initializeSocket = (server) => {
         socket.on("leave-workspace-chat", ({ workspaceId }) => {
             const chatRoom = `chat:${workspaceId}`;
             socket.leave(chatRoom);
-            console.log(`💬 User ${socket.user?.username} left chat room: ${chatRoom}`);
 
             const users = getActiveUsersInRoom(io, chatRoom);
             io.to(chatRoom).emit("chat-users", { workspaceId, users });
@@ -187,7 +181,6 @@ export const initializeSocket = (server) => {
         });
 
         socket.on("disconnect", () => {
-            console.log(`🔌 User disconnected: ${socket.user?.username || "Unknown"} (Socket ID: ${socket.id})`);
         });
     });
 

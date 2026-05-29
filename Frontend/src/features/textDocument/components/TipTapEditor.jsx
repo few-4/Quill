@@ -124,6 +124,7 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
   const [, forceUpdate] = useState(0);
   const hasInitializedRef = useRef(false);
   const remoteCursorsRef = useRef(remoteCursors);
+  const isApplyingRemoteUpdateRef = useRef(false);
 
   // Keep the ref always in sync so the plugin closure reads the latest cursors
   useEffect(() => {
@@ -163,7 +164,8 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
       }
     },
     onSelectionUpdate: ({ editor }) => {
-      if (!socket) return;
+      // Don't broadcast our own cursor shift caused by a remote setContent call
+      if (!socket || isApplyingRemoteUpdateRef.current) return;
       const { from, to } = editor.state.selection;
       socket.emit('cursor-move', { from, to });
     },
@@ -185,12 +187,20 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
       // Compare serialized JSON structures to avoid infinite loop locks
       if (JSON.stringify(currentJSON) !== JSON.stringify(content)) {
         const { from, to } = editor.state.selection;
+        // Guard: suppress cursor-move emit that would fire from the selection
+        // change triggered by setContent, preventing phantom cursor jumps for others
+        isApplyingRemoteUpdateRef.current = true;
         editor.commands.setContent(content, false);
         try {
           editor.commands.setTextSelection({ from, to });
         } catch (e) {
-          // Ignore selection restore if index is out of bounds
+          // Ignore selection restore if index is out of bounds after deletions
         }
+        // Clear after the current event-loop tick so the onSelectionUpdate
+        // callback (which fires synchronously) can read the flag
+        setTimeout(() => {
+          isApplyingRemoteUpdateRef.current = false;
+        }, 0);
       }
     }
   }, [editor, content]);

@@ -25,9 +25,7 @@ export const useAuth = () => {
       queryClient.setQueryData(["register-email"], variables.email);
       navigate("/verify-otp");
     },
-    onError: (error) => {
-      console.error("Register error:", error?.response?.data?.message || error.message);
-    },
+    onError: () => {},
   });
 
   const handleLogin = () => useMutation({
@@ -43,9 +41,7 @@ export const useAuth = () => {
       dispatch(setAccessToken(token));
       navigate("/workspace");
     },
-    onError: (error) => {
-      console.error("Login error:", error?.response?.data?.message || error.message);
-    },
+    onError: () => {},
   });
 
   const handleVerifyOTP = () => useMutation({
@@ -62,9 +58,7 @@ export const useAuth = () => {
       queryClient.removeQueries({ queryKey: ["register-email"] });
       navigate("/workspace");
     },
-    onError: (error) => {
-      console.error("OTP error:", error?.response?.data?.message || error.message);
-    },
+    onError: () => {},
   });
 
   const handleGetMe = () => useQuery({
@@ -100,16 +94,12 @@ export const useAuth = () => {
 
   const handleForgotPassword = () => useMutation({
     mutationFn: forgotPasswordApi,
-    onError: (error) => {
-      console.error("Forgot password error:", error?.response?.data?.message || error.message);
-    },
+    onError: () => {},
   });
 
   const handleResetPassword = () => useMutation({
     mutationFn: resetPasswordApi,
-    onError: (error) => {
-      console.error("Reset password error:", error?.response?.data?.message || error.message);
-    },
+    onError: () => {},
   });
 
   return { handleRegister, handleLogin, handleVerifyOTP, handleGetMe, handleLogout, handleForgotPassword, handleResetPassword };

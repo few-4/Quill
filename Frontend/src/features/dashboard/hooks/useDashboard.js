@@ -126,9 +126,7 @@ export const useDashboard = () => {
         queryClient.invalidateQueries({ queryKey: ["documents", variables.workspaceId] });
         navigate(`/documents/${variables.workspaceId}/document/${data.data._id}`);
       },
-      onError: (error) => {
-        console.log(error.response?.data?.message || error.message);
-      },
+      onError: () => {},
     });
 
   return {

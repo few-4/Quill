@@ -14,8 +14,6 @@ const VerifyOTP = () => {
   const { handleVerifyOTP } = useAuth();
   const {mutate : verifyOtp, isError, isPending, error} = handleVerifyOTP()
 
-  console.log(verifyOtp)
-
   const [timeLeft, setTimeLeft] = useState(120);
 
   useEffect(() => {

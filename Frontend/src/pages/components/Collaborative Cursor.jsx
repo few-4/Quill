@@ -2,7 +2,7 @@ import React, { memo } from "react";
 
 const CollaborativeCursor = memo(({ name, color, className }) => {
   return (
-    <div className={`absolute flex items-start gap-1 z-10 pointer-events-none select-none ${className}`}>
+    <div className={`hidden md:flex absolute items-start gap-1 z-10 pointer-events-none select-none ${className}`}>
       {/* SVG Mouse Cursor Arrow */}
       <svg
         width="16"

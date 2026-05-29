@@ -78,7 +78,7 @@ const ChatPanel = ({ workspaceId }) => {
     });
 
     socket.on("chat-error", ({ message: errMsg }) => {
-      console.error("Chat error:", errMsg);
+      setError(errMsg);
     });
 
     return () => {

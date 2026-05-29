@@ -12,7 +12,6 @@ import { deleteRefreshToken, saveRefreshToken, findRefreshToken, findRefreshToke
 export const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password, fullname } = req.body;
 
-    console.log(req.body, "in controller")
     const userByEmail = await User.findUserByEmail(email);
     if (userByEmail) {
         if (userByEmail.isVerified) {
@@ -145,7 +144,6 @@ export const loginUser = asyncHandler(async (req, res) => {
         const revokeAccess = await deleteRefreshToken(user._id);
 
         if (!revokeAccess) {
-            console.warn(`Logout warning: No active tokens found or deleted for user: ${user._id}`);
         }
     }
 
@@ -176,7 +174,6 @@ export const logoutUser = asyncHandler(async (req, res) => {
     const revokeAccess = await deleteRefreshToken(userId);
 
     if (!revokeAccess) {
-        console.warn(`Logout warning: No active tokens found or deleted for user: ${userId}`);
     }
 
     res.clearCookie("refreshToken", CookieOption);
