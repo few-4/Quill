@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router';
 import { Sun, Moon, Menu, X, ArrowUpRight } from 'lucide-react';
+import { QuillLogo } from "../../components/QuillLogo";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,8 +47,9 @@ export default function Navbar() {
         
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <Link to="/" className="text-xl font-bold tracking-tight text-theme-txt-primary flex items-center hover:opacity-90 transition-opacity">
-            Quill
+          <Link to="/" className="text-xl font-bold tracking-tight text-theme-txt-primary flex items-center gap-2 hover:opacity-90 transition-opacity no-underline">
+            <QuillLogo className="w-6.5 h-6.5" />
+            <span>Quill</span>
           </Link>
         </div>
 

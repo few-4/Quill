@@ -1,0 +1,48 @@
+import React from "react";
+
+export function QuillLogo({ className = "w-6 h-6" }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" className={className}>
+      <defs>
+        <linearGradient id="pencilEraser" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#f43f5e" />
+          <stop offset="100%" stop-color="#ec4899" />
+        </linearGradient>
+        <linearGradient id="pencilFerrule" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#94a3b8" />
+          <stop offset="50%" stop-color="#f1f5f9" />
+          <stop offset="100%" stop-color="#64748b" />
+        </linearGradient>
+        <linearGradient id="pencilBody" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4f46e5" />
+          <stop offset="50%" stop-color="#6366f1" />
+          <stop offset="100%" stop-color="#2563eb" />
+        </linearGradient>
+        <linearGradient id="pencilWood" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#e5c158" />
+          <stop offset="50%" stop-color="#fef08a" />
+          <stop offset="100%" stop-color="#d97706" />
+        </linearGradient>
+        <linearGradient id="pencilLead" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+        <filter id="pencilGlow" x="-25%" y="-25%" width="150%" height="150%">
+          <feGaussianBlur stdDeviation="1" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      
+      <g transform="rotate(-45 16 16)" filter="url(#pencilGlow)">
+        <path d="M12 6V4C12 2.9 12.9 2 14 2H18C19.1 2 20 2.9 20 4V6H12Z" fill="url(#pencilEraser)" />
+        <rect x="12" y="6" width="8" height="3" fill="url(#pencilFerrule)" />
+        <rect x="12" y="9" width="8" height="13" fill="url(#pencilBody)" />
+        <rect x="15.5" y="9" width="1" height="13" fill="#ffffff" fill-opacity="0.25" />
+        <rect x="12" y="9" width="1" height="13" fill="#ffffff" fill-opacity="0.1" />
+        <rect x="19" y="9" width="1" height="13" fill="#000000" fill-opacity="0.15" />
+        <path d="M12 22L16 28L20 22H12Z" fill="url(#pencilWood)" />
+        <path d="M14.67 26L16 28L17.33 26H14.67Z" fill="url(#pencilLead)" />
+      </g>
+    </svg>
+  );
+}

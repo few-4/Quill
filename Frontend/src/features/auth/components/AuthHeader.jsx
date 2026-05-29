@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { Sun, Moon } from "lucide-react";
+import { QuillLogo } from "../../../components/QuillLogo";
 
 /**
  * AuthHeader - Shared header for auth pages (Login / Register).
@@ -48,9 +49,10 @@ const AuthHeader = ({ authLinkTo, authLinkText }) => {
         {/* Logo */}
         <Link
           to="/"
-          className="text-xl font-bold tracking-tight text-theme-txt-primary hover:opacity-90 transition-opacity no-underline"
+          className="text-xl font-bold tracking-tight text-theme-txt-primary flex items-center gap-2 hover:opacity-90 transition-opacity no-underline"
         >
-          Quill
+          <QuillLogo className="w-6.5 h-6.5" />
+          <span>Quill</span>
         </Link>
 
         {/* Right side — theme toggle + auth link */}

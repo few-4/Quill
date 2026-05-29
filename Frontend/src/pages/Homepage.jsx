@@ -189,7 +189,7 @@ const Homepage = () => {
           </p>
 
           <Link
-            to=""
+            to="/sign-in"
             className="w-full sm:w-auto bg-theme-btn-cta-bg text-theme-btn-cta-text font-semibold text-xs px-8 py-3.5 rounded-md hover:opacity-90 active:scale-[0.98] theme-transition duration-200 shadow-md text-center"
           >
             Launch Your Workspace
