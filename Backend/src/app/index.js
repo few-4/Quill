@@ -33,7 +33,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.options("*", cors(corsOptions));
+// Explicitly handle OPTIONS preflight for all routes (required for Render + Vercel cross-origin)
+// Note: Express 5 uses path-to-regexp v8 — bare "*" is invalid, must use "/{*splat}"
+app.options("/{*splat}", cors(corsOptions));
 app.use(morgan("dev"));
 
 // Middleware for parsing JSON request bodies
