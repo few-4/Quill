@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { ApiError } from "../utils/ApiError.js";
 
 export const hashPassword = async (password) => {

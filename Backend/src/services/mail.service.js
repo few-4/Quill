@@ -51,7 +51,8 @@ export const sendOTPEmail = async (email, otp) => {
         try {
             const info = await transporter.sendMail(mailOptions);
             return !!info.messageId;
-        } catch {
+        } catch (error) {
+            console.error("[SMTP Error] Failed to send OTP email:", error.message || error);
             return false;
         }
 
@@ -107,7 +108,8 @@ export const sendPasswordResetEmail = async (email, otp) => {
     try {
         const info = await transporter.sendMail(mailOptions);
         return !!info.messageId;
-    } catch {
+    } catch (error) {
+        console.error("[SMTP Error] Failed to send password reset email:", error.message || error);
         return false;
     }
 }

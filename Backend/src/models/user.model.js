@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         select: false,
         trim: true
     },
+    fullname: {
+        type: String,
+        trim: true
+    },
     isVerified: {
         type: Boolean,
         default: false,
