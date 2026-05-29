@@ -12,7 +12,7 @@ export const getActiveUsersInRoom = (io, documentId) => {
             if (clientSocket && clientSocket.user) {
                 activeUsers.push({
                     socketId: clientSocket.id,
-                    userId: clientSocket.user.id || clientSocket.user._id,
+                    userId: clientSocket.user.userId || clientSocket.user.id || clientSocket.user._id,
                     username: clientSocket.user.username,
                     email: clientSocket.user.email
                 });

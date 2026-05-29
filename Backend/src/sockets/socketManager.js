@@ -69,6 +69,10 @@ export const initializeSocket = (server) => {
                     console.error(`❌ Error saving document ${documentId}:`, error);
                 }
             });
+
+            socket.on("rename-document", ({ title }) => {
+                socket.to(documentId).emit("document-renamed", { title });
+            });
         });
 
         socket.on("leave-document", ({ documentId }) => {
@@ -92,6 +96,9 @@ export const initializeSocket = (server) => {
                 const chatRoom = `chat:${workspaceId}`;
                 socket.join(chatRoom);
                 console.log(`💬 User ${socket.user?.username} joined chat room: ${chatRoom}`);
+
+                const users = getActiveUsersInRoom(io, chatRoom);
+                io.to(chatRoom).emit("chat-users", { workspaceId, users });
             } catch (error) {
                 console.error(`❌ Error joining workspace chat:`, error);
             }
@@ -106,6 +113,24 @@ export const initializeSocket = (server) => {
             const chatRoom = `chat:${workspaceId}`;
             socket.leave(chatRoom);
             console.log(`💬 User ${socket.user?.username} left chat room: ${chatRoom}`);
+
+            const users = getActiveUsersInRoom(io, chatRoom);
+            io.to(chatRoom).emit("chat-users", { workspaceId, users });
+        });
+
+        socket.on("typing", ({ workspaceId }) => {
+            const chatRoom = `chat:${workspaceId}`;
+            socket.to(chatRoom).emit("user-typing", { 
+                username: socket.user?.username, 
+                userId: socket.user?.userId || socket.user?.id 
+            });
+        });
+
+        socket.on("stop-typing", ({ workspaceId }) => {
+            const chatRoom = `chat:${workspaceId}`;
+            socket.to(chatRoom).emit("user-stop-typing", { 
+                userId: socket.user?.userId || socket.user?.id 
+            });
         });
 
         socket.on("disconnecting", () => {
@@ -114,7 +139,14 @@ export const initializeSocket = (server) => {
                 if (room !== socket.id) {
                     process.nextTick(() => {
                         const users = getActiveUsersInRoom(io, room);
-                        io.to(room).emit("room-users", { documentId: room, users });
+                        if (room.startsWith("chat:")) {
+                            io.to(room).emit("chat-users", { 
+                                workspaceId: room.replace("chat:", ""), 
+                                users 
+                            });
+                        } else {
+                            io.to(room).emit("room-users", { documentId: room, users });
+                        }
                     });
                 }
             });

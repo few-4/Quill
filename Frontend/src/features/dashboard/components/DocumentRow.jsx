@@ -102,14 +102,14 @@ const DocumentRow = ({ doc, onClick, onDelete, onRename, timeAgoText }) => {
           <>
             <button
               onClick={startRename}
-              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-theme-txt-secondary/40 hover:text-brand-blue hover:bg-brand-blue/10 theme-transition cursor-pointer border-none bg-transparent"
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg text-theme-txt-secondary/40 hover:text-brand-blue hover:bg-brand-blue/10 theme-transition cursor-pointer border-none bg-transparent"
               title="Rename document"
             >
               <Pencil className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onDelete(doc); }}
-              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-theme-txt-secondary/40 hover:text-red-400 hover:bg-red-500/10 theme-transition cursor-pointer border-none bg-transparent"
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg text-theme-txt-secondary/40 hover:text-red-400 hover:bg-red-500/10 theme-transition cursor-pointer border-none bg-transparent"
               title="Delete document"
             >
               <Trash2 className="w-3.5 h-3.5" />

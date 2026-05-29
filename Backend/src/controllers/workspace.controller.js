@@ -84,3 +84,16 @@ export const deleteWorkspace = asyncHandler(async (req, res) => {
 
     return new ApiResponse(200, { workspaceId }, "Workspace deleted successfully").send(res);
 });
+
+export const leaveWorkspace = asyncHandler(async (req, res) => {
+    const { workspaceId } = req.params;
+    const userId = req.user.userId;
+
+    const workspace = await workspaceDao.leaveWorkspace(workspaceId, userId);
+
+    if (!workspace) {
+        throw new ApiError(404, "Workspace not found");
+    }
+
+    return new ApiResponse(200, null, "Workspace left successfully").send(res);
+});

@@ -29,7 +29,7 @@ const NAV_ITEMS = (workspaceId) => [
   { label: "Settings", icon: Settings, to: `/settings/${workspaceId}` },
 ];
 
-const LeftNavBar = () => {
+const LeftNavBar = ({ onCloseMobileMenu }) => {
   const currentWorkspace = useSelector((state) => state.dashboard.workspace);
   const currentUser = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
@@ -99,6 +99,9 @@ const LeftNavBar = () => {
               <div key={item.label} className="flex flex-col">
                 <NavLink
                   to={item.to}
+                  onClick={() => {
+                    if (onCloseMobileMenu) onCloseMobileMenu();
+                  }}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium theme-transition duration-200 group relative no-underline ${
                     isItemActive
                       ? "bg-theme-btn-sec-hover text-theme-txt-primary"

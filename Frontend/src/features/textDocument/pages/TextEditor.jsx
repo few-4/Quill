@@ -70,6 +70,13 @@ const DocumentPage = () => {
       });
     });
 
+    newSocket.on("document-renamed", ({ title }) => {
+      queryClient.setQueryData(["document", documentId], (oldData) => {
+        if (!oldData) return oldData;
+        return { ...oldData, title };
+      });
+    });
+
     return () => {
       newSocket.emit("leave-document", { documentId });
       newSocket.disconnect();
@@ -167,6 +174,7 @@ const DocumentPage = () => {
         handleModeToggle={handleModeToggle}
         onlineUsers={onlineUsers}
         currentUser={currentUser}
+        socket={socket}
       />
       {/* Editor */}
       <main className="flex-1 w-full max-w-4xl mx-auto p-6 z-10">

@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { SendHorizontal } from "lucide-react";
 
-const ChatInput = ({ onSend, isPending, workspaceName = "workspace" }) => {
+const ChatInput = ({ onSend, isPending, workspaceName = "workspace", onTyping }) => {
   const [value, setValue] = useState("");
   const textareaRef = useRef(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -12,6 +14,12 @@ const ChatInput = ({ onSend, isPending, workspaceName = "workspace" }) => {
     el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
   }, [value]);
 
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, []);
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -19,11 +27,37 @@ const ChatInput = ({ onSend, isPending, workspaceName = "workspace" }) => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    setValue(val);
+
+    if (onTyping) {
+      if (!isTyping && val.trim().length > 0) {
+        setIsTyping(true);
+        onTyping(true);
+      } else if (val.trim().length === 0 && isTyping) {
+        setIsTyping(false);
+        onTyping(false);
+      }
+    }
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      if (isTyping) {
+        setIsTyping(false);
+        if (onTyping) onTyping(false);
+      }
+    }, 2000);
+  };
+
   const submit = () => {
     const trimmed = value.trim();
     if (!trimmed || isPending) return;
     onSend(trimmed);
     setValue("");
+    setIsTyping(false);
+    if (onTyping) onTyping(false);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -41,7 +75,7 @@ const ChatInput = ({ onSend, isPending, workspaceName = "workspace" }) => {
           ref={textareaRef}
           rows={1}
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder={`Message #${workspaceName}…`}
           maxLength={1000}

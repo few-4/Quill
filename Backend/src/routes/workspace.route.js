@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createWorkspace, getAllWorkspaces, getSingleWorkspace, joinWorkspace, updateWorkspace, deleteWorkspace } from "../controllers/workspace.controller.js";
+import { createWorkspace, getAllWorkspaces, getSingleWorkspace, joinWorkspace, updateWorkspace, deleteWorkspace, leaveWorkspace } from "../controllers/workspace.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { createWorkspaceValidator, updateWorkspaceValidator } from "../validators/workspace.validator.js";
 
@@ -46,5 +46,12 @@ workspaceRouter.patch("/:workspaceId", authMiddleware, updateWorkspaceValidator,
  * @access Private
  */
 workspaceRouter.delete("/:workspaceId", authMiddleware, deleteWorkspace);
+
+/**
+ * @description leave workspace
+ * @route POST /api/workspace/:workspaceId/leave
+ * @access Private
+ */
+workspaceRouter.post("/:workspaceId/leave", authMiddleware, leaveWorkspace);
 
 export default workspaceRouter;

@@ -29,3 +29,8 @@ export async function deleteWorkspace({ workspaceId }) {
   const response = await api.delete(`workspace/${workspaceId}`);
   return response.data;
 }
+
+export async function leaveWorkspace({ workspaceId }) {
+  const response = await api.post(`workspace/${workspaceId}/leave`);
+  return response.data;
+}

@@ -6,6 +6,7 @@ import {
   createWorkspace as createWorkspaceApi,
   joinWorkspace as joinWorkspaceApi,
   deleteWorkspace as deleteWorkspaceApi,
+  leaveWorkspace as leaveWorkspaceApi,
 } from "../services/workspace.api.js";
 import { setCurrentWorkspace } from "../workspace.slice.js";
 
@@ -51,6 +52,18 @@ export const useDeleteWorkspace = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteWorkspaceApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+      navigate("/workspace");
+    },
+  });
+};
+
+export const useLeaveWorkspace = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: leaveWorkspaceApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });
       navigate("/workspace");

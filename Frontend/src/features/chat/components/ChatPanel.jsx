@@ -18,9 +18,17 @@ const ChatPanel = ({ workspaceId }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem("chat_sidebar_collapsed") === "true";
   });
+  const [chatUsers, setChatUsers] = useState([]);
+  const [typingUsers, setTypingUsers] = useState([]);
 
   const { data: messages = [], isLoading } = useMessages(workspaceId);
   const { mutate: sendMsg, isPending } = useSendMessage(workspaceId);
+
+  const handleTyping = (isTyping) => {
+    if (socketRef.current) {
+      socketRef.current.emit(isTyping ? "typing" : "stop-typing", { workspaceId });
+    }
+  };
 
   useEffect(() => {
     if (!accessToken || !workspaceId) return;
@@ -43,6 +51,32 @@ const ChatPanel = ({ workspaceId }) => {
       });
     });
 
+    socket.on("chat-users", ({ users }) => {
+      const uniqueUsers = [];
+      const userIds = new Set();
+      users.forEach((u) => {
+        if (!userIds.has(u.userId)) {
+          userIds.add(u.userId);
+          uniqueUsers.push(u);
+        }
+      });
+      setChatUsers(uniqueUsers);
+    });
+
+    socket.on("user-typing", ({ username, userId }) => {
+      const selfId = currentUser?._id || currentUser?.id || currentUser?.userId;
+      if (userId === selfId) return;
+      setTypingUsers((prev) => {
+        const alreadyExists = prev.some((u) => u.userId === userId);
+        if (alreadyExists) return prev;
+        return [...prev, { userId, username }];
+      });
+    });
+
+    socket.on("user-stop-typing", ({ userId }) => {
+      setTypingUsers((prev) => prev.filter((u) => u.userId !== userId));
+    });
+
     socket.on("chat-error", ({ message: errMsg }) => {
       console.error("Chat error:", errMsg);
     });
@@ -51,7 +85,7 @@ const ChatPanel = ({ workspaceId }) => {
       socket.emit("leave-workspace-chat", { workspaceId });
       socket.disconnect();
     };
-  }, [accessToken, workspaceId, queryClient]);
+  }, [accessToken, workspaceId, queryClient, currentUser]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -110,6 +144,30 @@ const ChatPanel = ({ workspaceId }) => {
                 <Hash className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{currentWorkspace?.name || "general"}</span>
               </button>
+            </div>
+
+            <div className="px-4 pt-6 flex flex-col gap-2">
+              <p className="text-[10px] font-bold tracking-widest text-theme-txt-secondary/30 uppercase px-2 mb-1">Online Members</p>
+              <div className="flex flex-col gap-1.5 max-h-56 overflow-y-auto px-2">
+                {chatUsers.length > 0 ? (
+                  chatUsers.map((u) => (
+                    <div key={u.socketId} className="flex items-center gap-2.5 py-1">
+                      <div className="relative shrink-0">
+                        <div className="w-6.5 h-6.5 rounded-full bg-linear-to-tr from-brand-blue to-brand-pink text-white flex items-center justify-center text-[9px] font-bold">
+                          {u.username?.substring(0, 1)?.toUpperCase() || "U"}
+                        </div>
+                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-brand-green border border-theme-card" />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[11px] font-semibold text-theme-txt-primary truncate leading-tight">{u.username}</span>
+                        <span className="text-[9px] text-theme-txt-secondary/40 truncate leading-none">Online</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-[11px] text-theme-txt-secondary/40 italic px-2">No active members</div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -193,11 +251,27 @@ const ChatPanel = ({ workspaceId }) => {
           <div ref={bottomRef} />
         </div>
 
+        {/* Typing indicator */}
+        {typingUsers.length > 0 && (
+          <div className="px-6 py-1.5 shrink-0 bg-theme-bg flex items-center gap-2 text-xs text-theme-txt-secondary/50 font-medium animate-in fade-in slide-in-from-bottom-2 duration-300">
+            {/* Animated Typing dots */}
+            <div className="flex gap-1 items-center shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+            <span className="truncate">
+              {typingUsers.map((u) => u.username).join(", ")} {typingUsers.length === 1 ? "is" : "are"} typing…
+            </span>
+          </div>
+        )}
+
         {/* Input */}
         <ChatInput
           onSend={handleSend}
           isPending={isPending}
           workspaceName={currentWorkspace?.name || "workspace"}
+          onTyping={handleTyping}
         />
       </div>
     </div>

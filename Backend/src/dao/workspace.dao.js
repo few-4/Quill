@@ -105,3 +105,18 @@ export const deleteWorkspace = async (workspaceId, ownerId) => {
 
   return workspace;
 };
+
+export const leaveWorkspace = async (workspaceId, userId) => {
+  const workspace = await Workspace.findById(workspaceId);
+  if (!workspace) return null;
+
+  if (workspace.owner.toString() === userId.toString()) {
+    throw new ApiError(400, "As the workspace owner, you cannot leave the workspace. You must delete the workspace instead.");
+  }
+
+  workspace.members = workspace.members.filter(
+    (memberId) => memberId.toString() !== userId.toString()
+  );
+  await workspace.save();
+  return workspace;
+};

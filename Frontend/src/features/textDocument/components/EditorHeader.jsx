@@ -12,7 +12,8 @@ const EditorHeader = ({
   isVisualMode,
   handleModeToggle,
   onlineUsers,
-  currentUser
+  currentUser,
+  socket
 }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -43,6 +44,9 @@ const EditorHeader = ({
           ),
         };
       });
+      if (socket) {
+        socket.emit("rename-document", { title: data.data.title });
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     },

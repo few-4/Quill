@@ -10,6 +10,7 @@ const ConfirmDialog = ({
   onConfirm,
   onCancel,
   danger = true,
+  error = "",
 }) => {
   if (!isOpen) return null;
 
@@ -29,6 +30,12 @@ const ConfirmDialog = ({
             <p className="text-xs text-theme-txt-secondary/70 mt-1 leading-relaxed">{message}</p>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-4 px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] font-semibold leading-relaxed animate-in fade-in">
+            {error}
+          </div>
+        )}
 
         <div className="flex items-center justify-end gap-2 mt-6">
           <button
