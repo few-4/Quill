@@ -3,7 +3,7 @@ import * as User from "../dao/user.dao.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { comparePassword, hashPassword } from "../services/bcrypt.service.js";
-import { sendOTPEmail } from "../services/mail.service.js";
+import { sendOTPEmail, sendPasswordResetEmail } from "../services/mail.service.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/token.util.js";
 import { CookieOption } from "../config/config.js";
 import { UAParser } from "ua-parser-js";
@@ -212,3 +212,56 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     }
     return new ApiResponse(200, { userId: user._id, email: user.email, username: user.username, fullname: user.fullname }, "User fetched successfully").send(res);
 })
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    const user = await User.findUserByEmail(email);
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if (!user.isVerified) {
+        throw new ApiError(400, "User is not verified");
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+    await User.updateUserForgotPasswordOtp(user._id, otp, otpExpiry);
+
+    const emailSent = await sendPasswordResetEmail(email, otp);
+    if (!emailSent) {
+        throw new ApiError(500, "Failed to send reset OTP email");
+    }
+
+    return new ApiResponse(200, { email }, "Password reset OTP sent to your email").send(res);
+});
+
+export const resetPassword = asyncHandler(async (req, res) => {
+    const { email, otp, password } = req.body;
+
+    const user = await User.findUserByEmail(email);
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if (!user.forgotPasswordOtp) {
+        throw new ApiError(400, "No password reset requested");
+    }
+
+    if (user.forgotPasswordOtp !== otp) {
+        throw new ApiError(400, "Invalid OTP");
+    }
+
+    if (user.forgotPasswordOtpExpiry < new Date()) {
+        throw new ApiError(400, "OTP has expired");
+    }
+
+    const hashedPassword = await hashPassword(password);
+    await User.updateUserPassword(user._id, hashedPassword);
+
+    await deleteRefreshToken(user._id);
+
+    return new ApiResponse(200, {}, "Password reset successfully").send(res);
+});

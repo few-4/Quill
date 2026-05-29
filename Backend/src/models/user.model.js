@@ -25,7 +25,9 @@ const userSchema = new mongoose.Schema({
         default: false,
     },
     otp: String,
-    otpExpiry: Date
+    otpExpiry: Date,
+    forgotPasswordOtp: String,
+    forgotPasswordOtpExpiry: Date
 }, { timestamps: true });
 
 userSchema.index({ createdAt: 1 }, { 

@@ -76,3 +76,26 @@ export const loginValidator = [
     
     validate
 ];
+
+export const resetPasswordValidator = [
+    body("email")
+        .trim()
+        .notEmpty().withMessage("Email is required")
+        .isEmail().withMessage("Invalid email format"),
+
+    body("otp")
+        .trim()
+        .notEmpty().withMessage("OTP is required")
+        .isLength({ min: 6, max: 6 }).withMessage("OTP must be 6 digits")
+        .isNumeric().withMessage("OTP must contain only numbers"),
+
+    body("password")
+        .notEmpty().withMessage("Password is required")
+        .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long")
+        .matches(/[0-9]/).withMessage("Password must contain at least one number")
+        .matches(/[A-Z]/).withMessage("Password must contain at least one uppercase letter")
+        .matches(/[a-z]/).withMessage("Password must contain at least one lowercase letter")
+        .matches(/[@#$!%*?&]/).withMessage("Password must contain at least one special character (@$!%*?&)"),
+
+    validate
+];

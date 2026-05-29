@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { loginUser, logoutUser, registerUser, resendOtp, verifyOtp, refreshAccessToken, getCurrentUser } from "../controllers/auth.controller.js";
-import { emailValidator, loginValidator, otpValidator, registerValidator } from "../validators/auth.validator.js";
+import { loginUser, logoutUser, registerUser, resendOtp, verifyOtp, refreshAccessToken, getCurrentUser, forgotPassword, resetPassword } from "../controllers/auth.controller.js";
+import { emailValidator, loginValidator, otpValidator, registerValidator, resetPasswordValidator } from "../validators/auth.validator.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { tokenMiddleware } from "../middlewares/token.middleware.js";
 
@@ -57,5 +57,8 @@ authRouter.post("/refresh-token", tokenMiddleware, refreshAccessToken);
  * @access Private
  */
 authRouter.get("/get-me", authMiddleware, getCurrentUser);
+
+authRouter.post("/forgot-password", emailValidator, forgotPassword);
+authRouter.post("/reset-password", resetPasswordValidator, resetPassword);
 
 export default authRouter;

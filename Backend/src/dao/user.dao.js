@@ -86,3 +86,26 @@ export const findUserById = async (userId) => {
         throw new ApiError(500, "Error finding user by ID");
     }
 }
+
+export const updateUserForgotPasswordOtp = async (userId, otp, otpExpiry) => {
+    try {
+        const user = await User.findByIdAndUpdate(userId, {
+            $set: { forgotPasswordOtp: otp, forgotPasswordOtpExpiry: otpExpiry }
+        }, { returnDocument: "after" });
+        return user;
+    } catch (error) {
+        throw new ApiError(500, "Error updating forgot password OTP");
+    }
+}
+
+export const updateUserPassword = async (userId, password) => {
+    try {
+        const user = await User.findByIdAndUpdate(userId, {
+            $set: { password },
+            $unset: { forgotPasswordOtp: 1, forgotPasswordOtpExpiry: 1 }
+        }, { returnDocument: "after" });
+        return user;
+    } catch (error) {
+        throw new ApiError(500, "Error updating user password");
+    }
+}

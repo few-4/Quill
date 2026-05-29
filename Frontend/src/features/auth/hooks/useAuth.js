@@ -5,6 +5,8 @@ import {
   login as loginApi,
   logout as logoutApi,
   getMe,
+  forgotPassword as forgotPasswordApi,
+  resetPassword as resetPasswordApi,
 } from "../services/auth.api";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
@@ -90,12 +92,25 @@ export const useAuth = () => {
       navigate("/sign-in");
     },
     onError: () => {
-      // Even if the server errors, clear local state and redirect
       dispatch(setLoggedOut());
       queryClient.clear();
       navigate("/sign-in");
     },
   });
 
-  return { handleRegister, handleLogin, handleVerifyOTP, handleGetMe, handleLogout };
+  const handleForgotPassword = () => useMutation({
+    mutationFn: forgotPasswordApi,
+    onError: (error) => {
+      console.error("Forgot password error:", error?.response?.data?.message || error.message);
+    },
+  });
+
+  const handleResetPassword = () => useMutation({
+    mutationFn: resetPasswordApi,
+    onError: (error) => {
+      console.error("Reset password error:", error?.response?.data?.message || error.message);
+    },
+  });
+
+  return { handleRegister, handleLogin, handleVerifyOTP, handleGetMe, handleLogout, handleForgotPassword, handleResetPassword };
 };

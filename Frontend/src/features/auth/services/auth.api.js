@@ -35,3 +35,13 @@ export async function getMe() {
   const response = await api.get("auth/get-me");
   return response.data;
 }
+
+export async function forgotPassword({ email }) {
+  const response = await api.post("auth/forgot-password", { email });
+  return response.data;
+}
+
+export async function resetPassword({ email, otp, password }) {
+  const response = await api.post("auth/reset-password", { email, otp, password });
+  return response.data;
+}
