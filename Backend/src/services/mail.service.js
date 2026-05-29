@@ -1,5 +1,12 @@
 import nodemailer from "nodemailer";
 import config from "../config/config.js";
+import dns from "dns";
+
+// Force Node to prioritize IPv4 over IPv6 when resolving hosts
+// (fixes ENETUNREACH / connection errors on cloud hosts like Render which don't support IPv6)
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder("ipv4first");
+}
 
 export const sendOTPEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
