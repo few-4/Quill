@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { io } from "socket.io-client";
-import { MessageSquare, Users, Hash } from "lucide-react";
+import { MessageSquare, Users, Hash, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useMessages, useSendMessage } from "../hooks/useChat";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
@@ -14,6 +14,10 @@ const ChatPanel = ({ workspaceId }) => {
   const queryClient = useQueryClient();
   const bottomRef = useRef(null);
   const socketRef = useRef(null);
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    return localStorage.getItem("chat_sidebar_collapsed") === "true";
+  });
 
   const { data: messages = [], isLoading } = useMessages(workspaceId);
   const { mutate: sendMsg, isPending } = useSendMessage(workspaceId);
@@ -82,37 +86,30 @@ const ChatPanel = ({ workspaceId }) => {
     <div className="w-full h-full flex bg-theme-bg theme-transition">
 
       {/* ── Left: sidebar info panel ── */}
-      <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-theme-border bg-theme-card theme-transition">
-        <div className="px-5 pt-6 pb-4 border-b border-theme-border/60">
-          <div className="flex items-center gap-2.5 mb-1">
-            <div className="w-7 h-7 rounded-lg bg-brand-blue/10 flex items-center justify-center">
-              <MessageSquare className="w-4 h-4 text-brand-blue" />
+      <aside className={`hidden lg:flex flex-col shrink-0 border-r border-theme-border bg-theme-card theme-transition transition-all duration-300 ${
+        isSidebarCollapsed ? "w-0 border-r-0 opacity-0 overflow-hidden" : "w-64 opacity-100"
+      }`}>
+        <div className="w-64 flex-1 flex flex-col justify-between overflow-y-auto overflow-x-hidden">
+          <div className="flex flex-col">
+            <div className="px-5 pt-6 pb-4 border-b border-theme-border/60">
+              <div className="flex items-center gap-2.5 mb-1">
+                <div className="w-7 h-7 rounded-lg bg-brand-blue/10 flex items-center justify-center">
+                  <MessageSquare className="w-4 h-4 text-brand-blue" />
+                </div>
+                <span className="text-sm font-bold text-theme-txt-primary tracking-tight">Workspace Chat</span>
+              </div>
+              <p className="text-[11px] text-theme-txt-secondary/50 leading-relaxed mt-2">
+                Real-time messaging for everyone in your workspace.
+              </p>
             </div>
-            <span className="text-sm font-bold text-theme-txt-primary tracking-tight">Workspace Chat</span>
-          </div>
-          <p className="text-[11px] text-theme-txt-secondary/50 leading-relaxed mt-2">
-            Real-time messaging for everyone in your workspace.
-          </p>
-        </div>
 
-        <div className="px-4 pt-4 flex flex-col gap-1">
-          <p className="text-[10px] font-bold tracking-widest text-theme-txt-secondary/30 uppercase px-2 mb-2">Channels</p>
-          <button className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-brand-blue/8 text-brand-blue text-xs font-semibold cursor-pointer border-none w-full text-left">
-            <Hash className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{currentWorkspace?.name || "general"}</span>
-          </button>
-        </div>
-
-        <div className="mt-auto px-4 py-4 border-t border-theme-border/60">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-brand-pink text-white flex items-center justify-center text-[10px] font-bold shrink-0">
-              {currentUser?.username?.charAt(0)?.toUpperCase() || "?"}
+            <div className="px-4 pt-4 flex flex-col gap-1">
+              <p className="text-[10px] font-bold tracking-widest text-theme-txt-secondary/30 uppercase px-2 mb-2">Channels</p>
+              <button className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-brand-blue/8 text-brand-blue text-xs font-semibold cursor-pointer border-none w-full text-left">
+                <Hash className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{currentWorkspace?.name || "general"}</span>
+              </button>
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-theme-txt-primary truncate">{currentUser?.username}</span>
-              <span className="text-[10px] text-theme-txt-secondary/40 truncate">Online</span>
-            </div>
-            <span className="ml-auto w-2 h-2 rounded-full bg-brand-green shrink-0" />
           </div>
         </div>
       </aside>
@@ -122,6 +119,24 @@ const ChatPanel = ({ workspaceId }) => {
 
         {/* Chat header */}
         <div className="flex items-center gap-3 px-6 py-4 border-b border-theme-border bg-theme-card theme-transition shrink-0">
+          <button
+            onClick={() => {
+              setIsSidebarCollapsed((prev) => {
+                const next = !prev;
+                localStorage.setItem("chat_sidebar_collapsed", String(next));
+                return next;
+              });
+            }}
+            className="p-1.5 rounded-lg hover:bg-theme-btn-sec-hover text-theme-txt-secondary/60 hover:text-theme-txt-primary transition-all duration-200 cursor-pointer border-none bg-transparent flex items-center justify-center mr-1"
+            title={isSidebarCollapsed ? "Show chat info sidebar" : "Hide chat info sidebar"}
+          >
+            {isSidebarCollapsed ? (
+              <PanelLeftOpen className="w-4 h-4" />
+            ) : (
+              <PanelLeftClose className="w-4 h-4" />
+            )}
+          </button>
+
           <div className="flex items-center gap-2.5">
             <Hash className="w-4 h-4 text-theme-txt-secondary/50" />
             <span className="text-sm font-bold text-theme-txt-primary tracking-tight">
