@@ -24,8 +24,13 @@ const documentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    // For REST persistence fallback/initial state
-    content: {
+    // For REST text document (TipTap JSON AST)
+    textContent: {
+      type: mongoose.Schema.Types.Mixed, 
+      default: null,
+    },
+    // For REST visual drawing canvas (Excalidraw JSON elements)
+    visualContent: {
       type: mongoose.Schema.Types.Mixed, 
       default: null,
     },

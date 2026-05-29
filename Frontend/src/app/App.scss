@@ -35,32 +35,48 @@ $brand-green: #10b981;
   --scrollbar-thumb-hover: #404040;
 
   &.light {
-    --bg-primary: #ffffff;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f4f4f5;
-    --bg-cta: #f4f4f5;
-    --text-primary: #09090b;
-    --text-secondary: #71717a;
-    --border-color: #e4e4e7; /* zinc-200 */
-    --grid-line-color: rgba(0, 0, 0, 0.05);
-    
-    --btn-cta-bg: #09090b;
-    --btn-cta-text: #ffffff;
-    --btn-sec-border: #e4e4e7;
-    --btn-sec-hover: #f4f4f5;
-    --nav-bg: rgba(255, 255, 255, 0.8);
-    
-    --cta-bg-gradient: radial-gradient(circle at center, rgba(0, 0, 0, 0.01) 0%, transparent 70%);
-    
-    --toggle-btn-bg: #f4f4f5;
-    --toggle-btn-hover: #e4e4e7;
-    
-    --gradient-text-from: #27272a; /* zinc-800 */
-    --gradient-text-via: #09090b; /* zinc-950 */
-    --gradient-text-to: #71717a; /* zinc-500 */
-    
-    --scrollbar-thumb: #a1a1aa; /* zinc-400 */
-    --scrollbar-thumb-hover: #71717a; /* zinc-500 */
+    /* Page background — warm off-white, not pure white */
+    --bg-primary: #f5f5f4;       /* stone-100 */
+    /* Card background — slightly elevated, still light but clearly separate */
+    --bg-secondary: #fafaf9;     /* stone-50 */
+    /* Tertiary / metric row bg — subtle warm tint */
+    --bg-tertiary: #e7e5e4;      /* stone-200 */
+    /* CTA section bg — light warm surface */
+    --bg-cta: #f0efed;
+
+    /* Text colors — near-black primary, medium warm gray secondary */
+    --text-primary: #1c1917;     /* stone-900 */
+    --text-secondary: #57534e;   /* stone-600 */
+
+    /* Borders — clearly visible warm gray */
+    --border-color: #c4bfbb;     /* stone-300-ish, noticeably visible */
+    --grid-line-color: rgba(0, 0, 0, 0.06);
+
+    /* CTA button — dark charcoal bg, white text */
+    --btn-cta-bg: #1c1917;
+    --btn-cta-text: #fafaf9;
+
+    /* Secondary buttons — visible border + light hover */
+    --btn-sec-border: #a8a29e;   /* stone-400 */
+    --btn-sec-hover: #e7e5e4;    /* stone-200 */
+
+    /* Navbar — translucent warm white */
+    --nav-bg: rgba(245, 245, 244, 0.88);
+
+    --cta-bg-gradient: radial-gradient(circle at center, rgba(0, 0, 0, 0.02) 0%, transparent 70%);
+
+    /* Theme toggle */
+    --toggle-btn-bg: #e7e5e4;
+    --toggle-btn-hover: #d6d3d1; /* stone-300 */
+
+    /* Hero gradient text — deep stone tones */
+    --gradient-text-from: #292524; /* stone-800 */
+    --gradient-text-via: #1c1917; /* stone-900 */
+    --gradient-text-to: #78716c;  /* stone-500 */
+
+    /* Scrollbar */
+    --scrollbar-thumb: #a8a29e;  /* stone-400 */
+    --scrollbar-thumb-hover: #78716c; /* stone-500 */
   }
 }
 
@@ -102,23 +118,6 @@ body {
   z-index: 1;
   transition: background-image 0.3s ease;
 }
-
-// SCSS Mixin for generating cursor floats
-// @mixin cursor-float($name, $y-offset, $x-offset, $duration) {
-//   @keyframes #{$name} {
-//     0%, 100% { transform: translateY(0px) translateX(0px); }
-//     50% { transform: translateY($y-offset) translateX($x-offset); }
-//   }
-  
-//   .animate-#{$name} {
-//     animation: #{$name} #{$duration} ease-in-out infinite;
-//   }
-// }
-
-// Instantiate animations using mixin
-// @include cursor-float(float-blue, -10px, 5px, 6s);
-// @include cursor-float(float-pink, 12px, -8px, 7s);
-// @include cursor-float(float-green, -8px, -6px, 8s);
 
 
 /* Premium Theme-Aware Global Scrollbar */

@@ -27,3 +27,27 @@ export const createWorkspaceValidator = [
 
     validate
 ]
+
+export const updateWorkspaceValidator = [
+    body("name")
+        .optional()
+        .trim()
+        .isString().withMessage("Workspace name must be a string")
+        .isLength({ min: 3, max: 30 }).withMessage("Workspace name must be between 3 and 30 characters long"),
+
+    body("description")
+        .optional()
+        .trim()
+        .isString().withMessage("Workspace description must be a string")
+        .isLength({ min: 10, max: 100 }).withMessage("Workspace description must be between 10 and 100 characters long"),
+
+    body()
+        .custom((_, { req }) => {
+            if (!req.body.name && !req.body.description) {
+                throw new Error("At least one of name or description is required");
+            }
+            return true;
+        }),
+
+    validate
+]

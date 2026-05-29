@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Plus, ChevronRight, Sparkles, FolderIcon } from 'lucide-react';
+import { Sparkles, FolderIcon } from 'lucide-react';
 import { useWorkspace } from '../hooks/useWorkspace';
 import CollaborativeCursor from '../../../pages/components/Collaborative Cursor';
 import CreateWorkSpaceModal from '../../../modal/CreateWorkSpaceModal';
+import JoinWorkSpaceModal from '../../../modal/JoinWorkSpaceModal';
 import { useDispatch } from 'react-redux';
 import { setCurrentWorkspace } from '../workspace.slice';
+import WorkspaceCard from '../components/WorkspaceCard';
+import CreateWorkspaceCard from '../components/CreateWorkspaceCard';
+import JoinWorkspaceCard from '../components/JoinWorkspaceCard';
 
 const gradientPresets = {
   indigo: 'from-indigo-500 to-purple-500 text-white',
@@ -25,6 +29,7 @@ const Workspaceselect = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const { handleWorkspaces } = useWorkspace();
   const { data: { data: workspaces = [] } = {}, isLoading } = handleWorkspaces();
 
@@ -85,34 +90,12 @@ const Workspaceselect = () => {
                 const color = getWorkspaceColor(ws.name);
                 const bgGradient = gradientPresets[color] || gradientPresets.indigo;
                 return (
-                  <div
+                  <WorkspaceCard
                     key={ws._id || ws.id}
+                    ws={ws}
                     onClick={() => handleWorkspaceSelection(ws)}
-                    className="group relative flex items-start gap-4 p-5 rounded-2xl bg-theme-card/65 border border-theme-border/80 backdrop-blur-md cursor-pointer hover:border-theme-txt-secondary/30 hover:bg-theme-card/90 hover:translate-y-[-2px] transition-all duration-300 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] select-none animate-in fade-in-50 slide-in-from-bottom-2"
-                  >
-                    {/* Glowing dynamic background highlight on hover */}
-                    <div className="absolute inset-0 rounded-2xl bg-linear-to-tr from-brand-blue/0 to-brand-pink/0 group-hover:from-brand-blue/2 group-hover:to-brand-pink/2 transition-colors duration-300 pointer-events-none" />
-
-                    {/* Icon Avatar */}
-                    <div className={`w-12 h-12 rounded-xl shrink-0 bg-linear-to-tr ${bgGradient} flex items-center justify-center font-bold text-lg shadow-inner shadow-black/10`}>
-                      {ws.name.charAt(0).toUpperCase()}
-                    </div>
-
-                    {/* Details */}
-                    <div className="flex-1 min-w-0 pr-6">
-                      <h3 className="text-base font-bold text-theme-txt-primary truncate group-hover:text-brand-blue transition-colors duration-200">
-                        {ws.name}
-                      </h3>
-                      <p className="text-xs text-theme-txt-secondary/80 leading-relaxed mt-1 line-clamp-2">
-                        {ws.description || 'Collaborative workspace for real-time creation.'}
-                      </p>
-                    </div>
-
-                    {/* Hover indicator arrow */}
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-theme-txt-secondary/30 group-hover:text-theme-txt-primary group-hover:translate-x-1 transition-all duration-300">
-                      <ChevronRight className="w-5 h-5" />
-                    </div>
-                  </div>
+                    bgGradient={bgGradient}
+                  />
                 );
               })
             ) : (
@@ -126,17 +109,14 @@ const Workspaceselect = () => {
               </div>
             )}
 
-            {/* Create Workspace CTA Card (Static UI presentation) */}
-            <div onClick={() => setIsModalOpen(true)} className="group flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-dashed border-theme-border/80 bg-theme-bg/30 backdrop-blur-md cursor-pointer hover:border-brand-blue/50 hover:bg-theme-card/50 transition-all duration-300 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] text-center min-h-[120px] select-none">
-              <div className="w-10 h-10 rounded-full bg-theme-card border border-theme-border group-hover:bg-brand-blue/10 group-hover:border-brand-blue/30 flex items-center justify-center text-theme-txt-secondary group-hover:text-brand-blue transition-all duration-300 mb-2">
-                <Plus className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-semibold text-theme-txt-secondary group-hover:text-theme-txt-primary transition-colors duration-200">
-                Create new workspace
-              </span>
-            </div>
+            {/* Create Workspace CTA Card */}
+            <CreateWorkspaceCard onClick={() => setIsModalOpen(true)} />
+
+            {/* Join Workspace CTA Card */}
+            <JoinWorkspaceCard onClick={() => setIsJoinModalOpen(true)} />
 
             <CreateWorkSpaceModal isVisible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <JoinWorkSpaceModal isVisible={isJoinModalOpen} onClose={() => setIsJoinModalOpen(false)} />
 
           </div>
 

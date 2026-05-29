@@ -1,7 +1,8 @@
 import { Server } from "socket.io";
 import { verifyAccessToken } from "../utils/token.util.js";
-import * as DocumentDAO from "../dao/document.dao.js"
+import * as DocumentDAO from "../dao/document.dao.js";
 import { getActiveUsersInRoom } from "./activeSocket.js";
+import { checkWorkSpaceMember } from "../dao/workspace.dao.js";
 
 export const initializeSocket = (server) => {
     const io = new Server(server, {
@@ -12,67 +13,92 @@ export const initializeSocket = (server) => {
         }
     });
 
-    io.use((socket, next)=>{
+    io.use((socket, next) => {
         try {
             const token = socket.handshake.auth?.token || socket.handshake.headers?.authorization?.split(" ")[1];
 
-            if(!token){
-                return next(new Error("Authorization token is missing"))
+            if (!token) {
+                return next(new Error("Authorization token is missing"));
             }
 
             const decodedToken = verifyAccessToken(token);
 
-            if(!decodedToken){
-                return next(new Error("Authentication Error: Invalid token"))
+            if (!decodedToken) {
+                return next(new Error("Authentication Error: Invalid token"));
             }
-            
-            socket.user = decodedToken;
 
+            socket.user = decodedToken;
             next();
         } catch (error) {
-            return next(new Error("Authentication Error: Connection refused"))
+            return next(new Error("Authentication Error: Connection refused"));
         }
-    })
+    });
 
     io.on("connection", (socket) => {
         console.log(`🔌 User connected: ${socket.user?.username || "Unknown"} (Socket ID: ${socket.id})`);
 
-        socket.on("join-document", ({documentId})=>{
-
-            //Check who is in room
-            const users = getActiveUsersInRoom(io, documentId);
-
-            io.to(documentId).emit("room-users", { documentId, users});
-
+        socket.on("join-document", ({ documentId }) => {
             socket.join(documentId);
             console.log(`🔌 User ${socket.user?.username} has entered Document Room: ${documentId}`);
 
-            socket.on("save-document", async({content, yDocState})=>{
-                try {
-                    const savedDoc = await DocumentDAO.saveDocumentData(documentId, content, yDocState)
+            const users = getActiveUsersInRoom(io, documentId);
+            io.to(documentId).emit("room-users", { documentId, users });
 
-                    if(!savedDoc){
-                        throw new Error("Document not found or could not be saved")
+            socket.on("save-document", async ({ textContent, visualContent, yDocState, type }) => {
+                try {
+                    const savedDoc = await DocumentDAO.saveDocumentData(documentId, textContent, visualContent, yDocState, type);
+
+                    if (!savedDoc) {
+                        throw new Error("Document not found or could not be saved");
                     }
 
                     console.log(`✅ Document Saved: ${documentId}`);
+                    socket.to(documentId).emit("document-updated", { textContent, visualContent, yDocState, type, senderSocketId: socket.id });
                 } catch (error) {
                     console.error(`❌ Error saving document ${documentId}:`, error);
                 }
-            })
-        })
+            });
+        });
 
-        socket.on("leave-document", ({documentId}) => {
+        socket.on("leave-document", ({ documentId }) => {
             socket.leave(documentId);
             console.log(`🚫 User ${socket.user?.username} left Document Room: ${documentId}`);
 
             const users = getActiveUsersInRoom(io, documentId);
-            io.to(documentId).emit("room-users", { documentId, users});
+            io.to(documentId).emit("room-users", { documentId, users });
         });
 
-        socket.on("disconnecting", ()=>{
-            const rooms = Array.from(socket.rooms);
+        socket.on("join-workspace-chat", async ({ workspaceId }) => {
+            try {
+                const userId = socket.user?.userId || socket.user?.id;
+                const isMember = await checkWorkSpaceMember(workspaceId, userId);
 
+                if (!isMember) {
+                    socket.emit("chat-error", { message: "You are not a member of this workspace" });
+                    return;
+                }
+
+                const chatRoom = `chat:${workspaceId}`;
+                socket.join(chatRoom);
+                console.log(`💬 User ${socket.user?.username} joined chat room: ${chatRoom}`);
+            } catch (error) {
+                console.error(`❌ Error joining workspace chat:`, error);
+            }
+        });
+
+        socket.on("send-workspace-message", ({ workspaceId, message }) => {
+            const chatRoom = `chat:${workspaceId}`;
+            socket.to(chatRoom).emit("new-workspace-message", { message });
+        });
+
+        socket.on("leave-workspace-chat", ({ workspaceId }) => {
+            const chatRoom = `chat:${workspaceId}`;
+            socket.leave(chatRoom);
+            console.log(`💬 User ${socket.user?.username} left chat room: ${chatRoom}`);
+        });
+
+        socket.on("disconnecting", () => {
+            const rooms = Array.from(socket.rooms);
             rooms.forEach((room) => {
                 if (room !== socket.id) {
                     process.nextTick(() => {
@@ -80,13 +106,13 @@ export const initializeSocket = (server) => {
                         io.to(room).emit("room-users", { documentId: room, users });
                     });
                 }
-            })
-        })
+            });
+        });
 
         socket.on("disconnect", () => {
             console.log(`🔌 User disconnected: ${socket.user?.username || "Unknown"} (Socket ID: ${socket.id})`);
-        })
-    })
+        });
+    });
 
-    return io
-}
+    return io;
+};

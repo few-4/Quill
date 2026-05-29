@@ -58,3 +58,50 @@ export const checkWorkSpaceMember = async (workspaceId, userId)=>{
 
   return exists;
 }
+
+export const joinWorkspaceByInviteCode = async (inviteCode, userId) => {
+  const workspace = await Workspace.findOne({ inviteCode });
+
+  if (!workspace) {
+    throw new ApiError(404, "Invalid invite code or workspace not found");
+  }
+
+  const isAlreadyMember = workspace.members.some(
+    (memberId) => memberId.toString() === userId.toString()
+  ) || workspace.owner.toString() === userId.toString();
+
+  if (isAlreadyMember) {
+    return workspace;
+  }
+
+  workspace.members.push(userId);
+  await workspace.save();
+
+  const populatedWorkspace = await Workspace.findById(workspace._id)
+    .populate("owner", "username email")
+    .select("name description owner members visibility inviteCode createdAt")
+    .lean();
+
+  return populatedWorkspace;
+};
+
+export const updateWorkspace = async (workspaceId, ownerId, fields) => {
+  const workspace = await Workspace.findOneAndUpdate(
+    { _id: workspaceId, owner: ownerId },
+    { $set: fields },
+    { returnDocument: 'after' }
+  )
+  .populate("owner", "username email")
+  .select("name description owner members visibility inviteCode createdAt");
+
+  return workspace;
+};
+
+export const deleteWorkspace = async (workspaceId, ownerId) => {
+  const workspace = await Workspace.findOneAndDelete({
+    _id: workspaceId,
+    owner: ownerId,
+  }).lean();
+
+  return workspace;
+};

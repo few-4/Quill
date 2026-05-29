@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const TOKEN_KEY = "quill_access_token";
+
+// Seed initial state from localStorage for session persistence across page refreshes
+const persistedToken = localStorage.getItem(TOKEN_KEY);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -7,8 +12,9 @@ export const authSlice = createSlice({
       id: null,
       email: null,
       username: null,
+      fullname: null,
     },
-    accessToken: null,
+    accessToken: persistedToken || null,
   },
 
   reducers: {
@@ -17,10 +23,17 @@ export const authSlice = createSlice({
     },
     setAccessToken: (state, action) => {
       state.accessToken = action.payload;
+      // Persist token to localStorage so it survives page refreshes
+      if (action.payload) {
+        localStorage.setItem(TOKEN_KEY, action.payload);
+      } else {
+        localStorage.removeItem(TOKEN_KEY);
+      }
     },
     setLoggedOut: (state) => {
-      state.user = null;
+      state.user = { id: null, email: null, username: null, fullname: null };
       state.accessToken = null;
+      localStorage.removeItem(TOKEN_KEY);
     },
   },
 });

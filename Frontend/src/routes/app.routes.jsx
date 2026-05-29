@@ -12,7 +12,9 @@ import Settings from "../features/dashboard/pages/Settings";
 import ProtectedOTP from "../features/auth/ProtectedOTP";
 import ResetPassword from "../features/auth/pages/ResetPassword";
 import Workspaceselect from "../features/workspace/pages/Workspaceselect";
-import { workspaceLoader } from "../features/workspace/Loaders/WorkspaceLoader";
+import TextEditor from "../features/textDocument/pages/TextEditor";
+import AuthGuard from "../features/auth/AuthGuard";
+import GuestGuard from "../features/auth/GuestGuard";
 
 const router = createBrowserRouter([
   {
@@ -21,15 +23,23 @@ const router = createBrowserRouter([
   },
   {
     path: "sign-up",
-    Component: Register,
+    element: (
+      <GuestGuard>
+        <Register />
+      </GuestGuard>
+    ),
   },
   {
     path: "sign-in",
-    Component: Login,
+    element: (
+      <GuestGuard>
+        <Login />
+      </GuestGuard>
+    ),
   },
   {
     path: "forgot-password",
-    Component: ResetPassword
+    Component: ResetPassword,
   },
   {
     path: "verify-otp",
@@ -40,25 +50,21 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: 'workspace',
-    Component: Workspaceselect,
-    loader: workspaceLoader
+    path: "workspace",
+    element: (
+      <AuthGuard>
+        <Workspaceselect />
+      </AuthGuard>
+    ),
   },
-  // {
-  //   path: "/dashboard/:workspaceId",
-  //   Component: Dashboard,
-  //   children: [
-  //     {
-  //       index: true,
-  //       Component: DashboardHome
-  //     }
-  //   ]
-  // }
   {
-    Component: Dashboard,
+    element: (
+      <AuthGuard>
+        <Dashboard />
+      </AuthGuard>
+    ),
     children: [
       {
-        index: true,
         path: "/dashboard/:workspaceId",
         Component: DashboardHome,
       },
@@ -67,8 +73,8 @@ const router = createBrowserRouter([
         Component: Documents,
       },
       {
-        path: "/document/:documentId",
-        Component: DocumentPage
+        path: "/documents/:workspaceId/document/:documentId",
+        Component: TextEditor,
       },
       {
         path: "/team-spaces/:workspaceId",

@@ -60,7 +60,7 @@ export const updateUserVerification = async (userId) => {
         const user = await User.findByIdAndUpdate(userId, {
             $set: { isVerified: true },
             $unset: { otp: 1, otpExpiry: 1 }
-        }, { new: true });
+        }, { returnDocument: 'after' });
         return user;
     } catch (error) {
         throw new ApiError(500, "Error updating user verification");
@@ -71,7 +71,7 @@ export const updateUserOtp = async (userId, otp, otpExpiry) => {
     try {
         const user = await User.findByIdAndUpdate(userId, {
             $set: { otp, otpExpiry }
-        }, { new: true });
+        }, { returnDocument: 'after' });
         return user;
     } catch (error) {
         throw new ApiError(500, "Error updating user OTP");

@@ -59,3 +59,27 @@ export const getDocumentByIdValidator = [
 
     validate
 ]
+
+export const renameDocumentValidator = [
+    param("docId")
+        .trim()
+        .notEmpty().withMessage("Document ID is required")
+        .isMongoId().withMessage("Document ID is not a valid mongo ID"),
+
+    body("title")
+        .trim()
+        .notEmpty().withMessage("Document title is required")
+        .isString().withMessage("Document title must be a string")
+        .isLength({ min: 1, max: 60 }).withMessage("Document title must be between 1 and 60 characters"),
+
+    validate
+]
+
+export const deleteDocumentValidator = [
+    param("docId")
+        .trim()
+        .notEmpty().withMessage("Document ID is required")
+        .isMongoId().withMessage("Document ID is not a valid mongo ID"),
+
+    validate
+]

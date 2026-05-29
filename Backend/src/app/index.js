@@ -5,8 +5,9 @@ import cookieParser from "cookie-parser"
 import globalError from "../middlewares/globalError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import authRouter from "../routes/auth.routes.js";
-import workspace from "../routes/workspace.route.js";
+import workspaceRouter from "../routes/workspace.route.js";
 import documentRouter from "../routes/document.routes.js";
+import messageRouter from "../routes/message.routes.js";
 import http from "http"
 
 const app = express();
@@ -45,10 +46,12 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRouter)
 
 //Notes route
-app.use("/api/workspace", workspace)
+app.use("/api/workspace", workspaceRouter)
 
 //Document route
 app.use("/api/document", documentRouter)
+
+app.use("/api/message", messageRouter)
 
 
 // Global error handling middleware

@@ -3,6 +3,7 @@ import { nanoid } from "nanoid"
 import * as workspaceDao from "../dao/workspace.dao.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import Document from "../models/document.model.js";
 
 export const createWorkspace = asyncHandler(async(req,res)=>{
 
@@ -37,3 +38,49 @@ export const getSingleWorkspace = asyncHandler(async (req, res) => {
 
     return new ApiResponse(200, {workspace}, "Workspace fetched successfully").send(res);
 })
+
+export const joinWorkspace = asyncHandler(async (req, res) => {
+    const { inviteCode } = req.body;
+    const userId = req.user.userId;
+
+    if (!inviteCode) {
+        throw new ApiError(400, "Invite code is required");
+    }
+
+    const workspace = await workspaceDao.joinWorkspaceByInviteCode(inviteCode?.trim(), userId);
+
+    return new ApiResponse(200, workspace, "Successfully joined workspace").send(res);
+});
+
+export const updateWorkspace = asyncHandler(async (req, res) => {
+    const { workspaceId } = req.params;
+    const userId = req.user.userId;
+    const { name, description } = req.body;
+
+    const fields = {};
+    if (name) fields.name = name.trim();
+    if (description) fields.description = description.trim();
+
+    const workspace = await workspaceDao.updateWorkspace(workspaceId, userId, fields);
+
+    if (!workspace) {
+        throw new ApiError(403, "You do not have permission to update this workspace or it does not exist");
+    }
+
+    return new ApiResponse(200, workspace, "Workspace updated successfully").send(res);
+});
+
+export const deleteWorkspace = asyncHandler(async (req, res) => {
+    const { workspaceId } = req.params;
+    const userId = req.user.userId;
+
+    const deleted = await workspaceDao.deleteWorkspace(workspaceId, userId);
+
+    if (!deleted) {
+        throw new ApiError(403, "You do not have permission to delete this workspace or it does not exist");
+    }
+
+    await Document.deleteMany({ workspaceId });
+
+    return new ApiResponse(200, { workspaceId }, "Workspace deleted successfully").send(res);
+});

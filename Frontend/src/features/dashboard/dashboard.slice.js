@@ -7,7 +7,6 @@ const dashboardSlice = createSlice({
     },
     reducers: {
         setWorkspace: (state, action) => {
-            console.log(action.payload)
             state.workspace = action.payload;
         }
     }

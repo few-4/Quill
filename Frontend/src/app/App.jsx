@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { RouterProvider } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import router from "../routes/app.routes.jsx";
@@ -17,6 +18,16 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  // Restore theme from localStorage on initial load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
+    }
+  }, []);
+
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-import { createDocumentValidator, getDocumentByIdValidator, getWorkspaceDocumentsValidator } from "../validators/document.validator.js";
-import { createDocument, getDocument, getWorkspaceDocuments } from "../controllers/document.controller.js";
+import { createDocumentValidator, getDocumentByIdValidator, getWorkspaceDocumentsValidator, renameDocumentValidator, deleteDocumentValidator } from "../validators/document.validator.js";
+import { createDocument, getDocument, getWorkspaceDocuments, renameDocument, deleteDocument } from "../controllers/document.controller.js";
 
 const documentRouter = Router();
 
@@ -25,6 +25,20 @@ documentRouter.get("/workspace/:workspaceId", authMiddleware, getWorkspaceDocume
  * @access Private
  */
 documentRouter.get("/:docId", authMiddleware, getDocumentByIdValidator, getDocument);
+
+/**
+ * @description rename a document
+ * @route PATCH /api/document/:docId
+ * @access Private
+ */
+documentRouter.patch("/:docId", authMiddleware, renameDocumentValidator, renameDocument);
+
+/**
+ * @description delete a document
+ * @route DELETE /api/document/:docId
+ * @access Private
+ */
+documentRouter.delete("/:docId", authMiddleware, deleteDocumentValidator, deleteDocument);
 
 
 export default documentRouter

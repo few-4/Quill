@@ -3,10 +3,12 @@ import {
   register as registerApi,
   verifyOTP as verifyOtpApi,
   login as loginApi,
+  logout as logoutApi,
+  getMe,
 } from "../services/auth.api";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { setUser, setAccessToken } from "../auth.slice";
+import { setUser, setAccessToken, setLoggedOut } from "../auth.slice";
 
 export const useAuth = () => {
 
@@ -14,71 +16,86 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
-  const handleRegister = () =>useMutation({
-      mutationFn: registerApi,
-      onSuccess: (data, variables) => {
-        dispatch(
-          setUser({
-            email: variables.email,
-          }),
-        );
-        queryClient.setQueryData(["register-email"], variables.email);
-        navigate("/verify-otp");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    });
+  const handleRegister = () => useMutation({
+    mutationFn: registerApi,
+    onSuccess: (data, variables) => {
+      dispatch(setUser({ email: variables.email }));
+      queryClient.setQueryData(["register-email"], variables.email);
+      navigate("/verify-otp");
+    },
+    onError: (error) => {
+      console.error("Register error:", error?.response?.data?.message || error.message);
+    },
+  });
 
   const handleLogin = () => useMutation({
-      mutationFn: loginApi,
-      onSuccess: (response) => {
-        const { user, token } = response.data || {};
-        console.log(user);
-        dispatch(
-          setUser({
-            id: user?._id,
-            email: user?.email,
-            username: user?.username,
-          }),
-        );
-        dispatch(setAccessToken(token));
-        navigate("/workspace");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    });
+    mutationFn: loginApi,
+    onSuccess: (response) => {
+      const { user, token } = response.data || {};
+      dispatch(setUser({
+        id: user?._id,
+        email: user?.email,
+        username: user?.username,
+        fullname: user?.fullname,
+      }));
+      dispatch(setAccessToken(token));
+      navigate("/workspace");
+    },
+    onError: (error) => {
+      console.error("Login error:", error?.response?.data?.message || error.message);
+    },
+  });
 
-  const handleVerifyOTP = () =>
-    useMutation({
-      mutationFn: verifyOtpApi,
-      onSuccess: (response) => {
-        // The backend ApiResponse wraps payload inside .data ({ user, token })
-        const { user, token } = response.data || {};
+  const handleVerifyOTP = () => useMutation({
+    mutationFn: verifyOtpApi,
+    onSuccess: (response) => {
+      const { user, token } = response.data || {};
+      dispatch(setUser({
+        id: user?._id,
+        email: user?.email,
+        username: user?.username,
+        fullname: user?.fullname,
+      }));
+      dispatch(setAccessToken(token));
+      queryClient.removeQueries({ queryKey: ["register-email"] });
+      navigate("/workspace");
+    },
+    onError: (error) => {
+      console.error("OTP error:", error?.response?.data?.message || error.message);
+    },
+  });
 
-        console.log({
-          id: user?._id,
-          email: user?.email,
-          username: user?.username,
-        });
+  const handleGetMe = () => useQuery({
+    queryKey: ["getMe"],
+    queryFn: async () => {
+      const response = await getMe();
+      const user = response.data;
+      dispatch(setUser({
+        id: user?.userId,
+        email: user?.email,
+        username: user?.username,
+        fullname: user?.fullname,
+      }));
+      return response;
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
 
-        dispatch(
-          setUser({
-            id: user?._id,
-            email: user?.email,
-            username: user?.username,
-          }),
-        );
+  const handleLogout = () => useMutation({
+    mutationFn: logoutApi,
+    onSuccess: () => {
+      dispatch(setLoggedOut());
+      queryClient.clear();
+      navigate("/sign-in");
+    },
+    onError: () => {
+      // Even if the server errors, clear local state and redirect
+      dispatch(setLoggedOut());
+      queryClient.clear();
+      navigate("/sign-in");
+    },
+  });
 
-        dispatch(setAccessToken(token));
-        queryClient.removeQueries({ queryKey: ["register-email"] });
-        navigate("/workspace");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    });
-
-  return { handleRegister , handleLogin, handleVerifyOTP };
+  return { handleRegister, handleLogin, handleVerifyOTP, handleGetMe, handleLogout };
 };
