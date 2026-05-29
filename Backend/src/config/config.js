@@ -2,10 +2,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const isProduction = process.env.NODE_ENV === "production" || (process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.startsWith("https"));
+
 export const CookieOption = {
-        httpOnly: true,  // Prevents JS access (XSS protection)
-        secure: false,
-        sameSite: "lax", // Prevents CSRF attacks
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
     }
 
 const input = [
