@@ -32,6 +32,7 @@ const NAV_ITEMS = (workspaceId) => [
 const LeftNavBar = ({ onCloseMobileMenu }) => {
   const currentWorkspace = useSelector((state) => state.dashboard.workspace);
   const currentUser = useSelector((state) => state.auth.user);
+  const unreadChat = useSelector((state) => state.dashboard.unreadChat);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -94,6 +95,7 @@ const LeftNavBar = ({ onCloseMobileMenu }) => {
             const Icon = item.icon;
             const isItemActive = location.pathname.startsWith(item.to);
             const isDocumentsItem = item.label === "Documents";
+            const isChatItem = item.label === "Chat";
 
             return (
               <div key={item.label} className="flex flex-col">
@@ -115,6 +117,10 @@ const LeftNavBar = ({ onCloseMobileMenu }) => {
                     isItemActive ? "text-brand-blue" : "text-theme-txt-secondary/70 group-hover:text-theme-txt-primary"
                   }`} />
                   <span className="truncate">{item.label}</span>
+
+                  {isChatItem && unreadChat && (
+                    <span className="absolute right-3.5 w-2 h-2 rounded-full bg-brand-pink shadow-[0_0_8px_rgba(236,72,153,0.6)] animate-pulse" />
+                  )}
 
                   {isDocumentsItem && (
                     <ChevronDown className={`w-3.5 h-3.5 ml-auto transition-transform duration-300 ${

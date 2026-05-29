@@ -1,19 +1,61 @@
-import React, { useState } from "react";
-import { Outlet, useParams } from "react-router";
+import React, { useState, useEffect } from "react";
+import { Outlet, useParams, useLocation } from "react-router";
 import { Menu } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { io } from "socket.io-client";
 import LeftNavBar from "../../../pages/components/LeftNavBar";
 import { useDashboard } from "../hooks/useDashboard";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { setUnreadChat } from "../dashboard.slice";
 
 const Dashboard = () => {
   const { handleCurrentWorkspace } = useDashboard();
   const { workspaceId } = useParams();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const currentUser = useSelector((state) => state.auth.user);
+  const accessToken = useSelector((state) => state.auth.accessToken);
+
   const { data: currentWorkspace, isLoading: isWorkspaceLoading } = handleCurrentWorkspace(workspaceId);
 
   const { handleGetMe } = useAuth();
   const { isLoading: isUserLoading } = handleGetMe();
+
+  useEffect(() => {
+    if (location.pathname.includes(`/team-spaces/${workspaceId}`)) {
+      dispatch(setUnreadChat(false));
+    }
+  }, [location.pathname, workspaceId, dispatch]);
+
+  // Connect to workspace chat in background to track incoming messages for the unread badge
+  useEffect(() => {
+    if (!accessToken || !workspaceId) return;
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+    const socket = io(backendUrl, {
+      auth: { token: accessToken },
+      transports: ["websocket"],
+    });
+
+    socket.emit("join-workspace-chat", { workspaceId });
+
+    socket.on("new-workspace-message", ({ message }) => {
+      const isOnChatPage = window.location.pathname.includes(`/team-spaces/${workspaceId}`);
+      const selfId = currentUser?._id || currentUser?.id || currentUser?.userId;
+      const isOwnMessage = (message.senderId?._id || message.senderId) === selfId;
+
+      if (!isOnChatPage && !isOwnMessage) {
+        dispatch(setUnreadChat(true));
+      }
+    });
+
+    return () => {
+      socket.emit("leave-workspace-chat", { workspaceId });
+      socket.disconnect();
+    };
+  }, [accessToken, workspaceId, currentUser, dispatch]);
 
   if (isUserLoading || isWorkspaceLoading || !currentWorkspace) {
     return (
