@@ -77,6 +77,7 @@ const ChatPanel = ({ workspaceId }) => {
     const senderId = msg.senderId?._id || msg.senderId;
     return (
       senderId === currentUser?._id ||
+      senderId === currentUser?.id ||
       senderId === currentUser?.userId ||
       msg.senderId?._optimistic
     );
