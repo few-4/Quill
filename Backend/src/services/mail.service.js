@@ -3,7 +3,9 @@ import config from "../config/config.js";
 
 export const sendOTPEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         auth: {
             user: config.EMAIL_USER,
             pass: config.EMAIL_PASS,
@@ -60,7 +62,9 @@ export const sendOTPEmail = async (email, otp) => {
 
 export const sendPasswordResetEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         auth: {
             user: config.EMAIL_USER,
             pass: config.EMAIL_PASS,
