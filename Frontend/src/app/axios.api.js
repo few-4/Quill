@@ -45,7 +45,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Avoid silent token refresh hijacking for auth/login/register endpoints
+    const isAuthEndpoint = originalRequest.url && (
+      originalRequest.url.includes("auth/login") ||
+      originalRequest.url.includes("auth/register") ||
+      originalRequest.url.includes("auth/verify-otp") ||
+      originalRequest.url.includes("auth/resend-otp") ||
+      originalRequest.url.includes("auth/forgot-password") ||
+      originalRequest.url.includes("auth/reset-password")
+    );
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
