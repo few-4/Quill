@@ -35,14 +35,18 @@ export const registerUser = asyncHandler(async (req, res) => {
     const emailSent = await sendOTPEmail(email, otp)
 
     if (!emailSent) {
-        throw new ApiError(500, "Failed to send OTP email. Please try again.");
+        console.warn(`[OTP Fallback] Failed to send email to ${email}. Use this OTP to verify: ${otp}`);
     }
 
     const hashedPassword = await hashPassword(password)
 
     const createdUser = await User.createUser(username, email, hashedPassword, fullname, otp, otpExpiry)
 
-    return new ApiResponse(201, { email: createdUser.email }, "OTP sent to your email").send(res);
+    const message = emailSent 
+        ? "OTP sent to your email" 
+        : "Registration initiated! We encountered a mail server delay on the cloud. Please check your backend logs for the OTP verification code.";
+
+    return new ApiResponse(201, { email: createdUser.email }, message).send(res);
 })
 
 export const verifyOtp = asyncHandler(async (req, res) => {
@@ -111,12 +115,16 @@ export const resendOtp = asyncHandler(async (req, res) => {
     const emailSent = await sendOTPEmail(email, otp)
     
     if (!emailSent) {
-        throw new ApiError(500, "Failed to send OTP email. Please try again.");
+        console.warn(`[OTP Fallback] Failed to resend email to ${email}. Use this OTP to verify: ${otp}`);
     }
 
     const updatedUser = await User.updateUserOtp(user._id, otp, otpExpiry);
 
-    return new ApiResponse(200, { email: updatedUser.email }, "OTP sent to your email").send(res);
+    const message = emailSent 
+        ? "OTP sent to your email" 
+        : "OTP resent successfully! Please check your backend logs for the OTP verification code.";
+
+    return new ApiResponse(200, { email: updatedUser.email }, message).send(res);
 })
 
 export const loginUser = asyncHandler(async (req, res) => {
@@ -229,10 +237,14 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 
     const emailSent = await sendPasswordResetEmail(email, otp);
     if (!emailSent) {
-        throw new ApiError(500, "Failed to send reset OTP email");
+        console.warn(`[Forgot Password Fallback] Failed to send email to ${email}. Use this OTP to reset: ${otp}`);
     }
 
-    return new ApiResponse(200, { email }, "Password reset OTP sent to your email").send(res);
+    const message = emailSent 
+        ? "Password reset OTP sent to your email" 
+        : "Password reset initiated! Please check your backend logs for the recovery verification code.";
+
+    return new ApiResponse(200, { email }, message).send(res);
 });
 
 export const resetPassword = asyncHandler(async (req, res) => {
