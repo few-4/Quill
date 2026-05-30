@@ -1,15 +1,19 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import config from "../config/config.js";
 
-const resend = new Resend(config.RESEND_API_KEY);
-
-const FROM_ADDRESS = "Quill <onboarding@resend.dev>";
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: config.EMAIL_USER,
+    pass: config.EMAIL_APP_PASSWORD,
+  },
+});
 
 export const sendOTPEmail = async (email, otp) => {
     try {
-        const { data, error } = await resend.emails.send({
-            from: FROM_ADDRESS,
-            to: [email],
+        const info = await transporter.sendMail({
+            from: `"Quill" <${config.EMAIL_USER}>`,
+            to: email,
             subject: "Verify your account - OTP",
             html: `
             <div style="background-color: #f9f9f9; padding: 40px 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -44,23 +48,18 @@ export const sendOTPEmail = async (email, otp) => {
             `,
         });
 
-        if (error) {
-            console.error("[Resend Error] Failed to send OTP email:", error.message || error);
-            return false;
-        }
-
-        return !!data?.id;
+        return !!info.messageId;
     } catch (err) {
-        console.error("[Resend Error] Failed to send OTP email:", err.message || err);
+        console.error("[SMTP Error] Failed to send OTP email:", err.message || err);
         return false;
     }
 };
 
 export const sendPasswordResetEmail = async (email, otp) => {
     try {
-        const { data, error } = await resend.emails.send({
-            from: FROM_ADDRESS,
-            to: [email],
+        const info = await transporter.sendMail({
+            from: `"Quill" <${config.EMAIL_USER}>`,
+            to: email,
             subject: "Reset your password - OTP",
             html: `
             <div style="background-color: #f9f9f9; padding: 40px 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -95,14 +94,9 @@ export const sendPasswordResetEmail = async (email, otp) => {
             `,
         });
 
-        if (error) {
-            console.error("[Resend Error] Failed to send password reset email:", error.message || error);
-            return false;
-        }
-
-        return !!data?.id;
+        return !!info.messageId;
     } catch (err) {
-        console.error("[Resend Error] Failed to send password reset email:", err.message || err);
+        console.error("[SMTP Error] Failed to send password reset email:", err.message || err);
         return false;
     }
 };

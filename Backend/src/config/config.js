@@ -13,7 +13,8 @@ export const CookieOption = {
 const input = [
     { name: "PORT", value: process.env.PORT },
     { name: "MONGO_URI", value: process.env.MONGO_URI },
-    { name: "RESEND_API_KEY", value: process.env.RESEND_API_KEY },
+    { name: "EMAIL_USER", value: process.env.EMAIL_USER },
+    { name: "EMAIL_APP_PASSWORD", value: process.env.EMAIL_APP_PASSWORD },
     { name: "ACCESS_TOKEN_SECRET", value: process.env.ACCESS_TOKEN_SECRET },
     { name: "REFRESH_TOKEN_SECRET", value: process.env.REFRESH_TOKEN_SECRET }
 ]
@@ -29,7 +30,8 @@ input.map(({name, value}) => {
 const config = {
     PORT: process.env.PORT,
     MONGO_URI: process.env.MONGO_URI,
-    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    EMAIL_USER: process.env.EMAIL_USER,
+    EMAIL_APP_PASSWORD: process.env.EMAIL_APP_PASSWORD,
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET
 }
