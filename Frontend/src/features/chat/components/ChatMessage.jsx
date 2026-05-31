@@ -47,33 +47,7 @@ const ChatMessage = ({ message, isOwn, grouped = false, onEdit, onDelete }) => {
 
   if (isOwn) {
     return (
-      <div className={`flex flex-col items-end gap-0.5 group relative ${grouped ? "mt-0.5" : "mt-3"}`}>
-        {!isOptimistic && !isEditing && (
-          <div className="absolute -top-3 right-2 hidden group-hover:flex items-center gap-0.5 bg-theme-card border border-theme-border rounded-lg p-0.5 shadow-md z-20">
-            <button
-              onClick={() => {
-                setEditContent(message.content);
-                setIsEditing(true);
-              }}
-              className="p-1 rounded hover:bg-theme-btn-sec-hover text-theme-txt-secondary hover:text-theme-txt-primary cursor-pointer border-none bg-transparent flex items-center justify-center"
-              title="Edit message"
-            >
-              <Pencil className="w-3 h-3" />
-            </button>
-            <button
-              onClick={() => {
-                if (confirm("Are you sure you want to delete this message?")) {
-                  onDelete(message._id);
-                }
-              }}
-              className="p-1 rounded hover:bg-theme-btn-sec-hover text-brand-pink hover:text-brand-pink/80 cursor-pointer border-none bg-transparent flex items-center justify-center"
-              title="Delete message"
-            >
-              <Trash2 className="w-3 h-3" />
-            </button>
-          </div>
-        )}
-
+      <div className={`flex flex-col items-end gap-0.5 ${grouped ? "mt-0.5" : "mt-3"}`}>
         <div className={`flex items-end gap-2 max-w-[70%]`}>
           <span className={`text-[10px] text-theme-txt-secondary/35 self-end mb-0.5 select-none ${isOptimistic ? "italic" : ""}`}>
             {isOptimistic ? "Sending…" : timeLabel(message.createdAt)}
@@ -81,32 +55,60 @@ const ChatMessage = ({ message, isOwn, grouped = false, onEdit, onDelete }) => {
               <span className="text-[9px] text-theme-txt-secondary/30 ml-1">(edited)</span>
             )}
           </span>
-          <div
-            className={`px-4 py-2.5 rounded-2xl rounded-br-sm text-sm leading-relaxed wrap-break-word bg-brand-blue text-white shadow-sm ${
-              isOptimistic ? "opacity-60" : "opacity-100"
-            } theme-transition ${isEditing ? "min-w-[200px]" : ""}`}
-          >
-            {isEditing ? (
-              <form onSubmit={handleSave} className="flex items-center gap-2 w-full">
-                <input
-                  type="text"
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  className="bg-transparent border-none text-sm text-white outline-none flex-1 font-sans"
-                  autoFocus
-                />
-                <div className="flex gap-1 shrink-0">
-                  <button type="submit" className="p-1 rounded hover:bg-white/10 text-white cursor-pointer border-none bg-transparent">
-                    <Check className="w-3.5 h-3.5" />
-                  </button>
-                  <button type="button" onClick={() => setIsEditing(false)} className="p-1 rounded hover:bg-white/10 text-white cursor-pointer border-none bg-transparent">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </form>
-            ) : (
-              message.content
+          <div className="relative group">
+            {!isOptimistic && !isEditing && (
+              <div className="absolute -top-3 right-2 hidden group-hover:flex items-center gap-0.5 bg-theme-card border border-theme-border rounded-lg p-0.5 shadow-md z-20">
+                <button
+                  onClick={() => {
+                    setEditContent(message.content);
+                    setIsEditing(true);
+                  }}
+                  className="p-1 rounded hover:bg-theme-btn-sec-hover text-theme-txt-secondary hover:text-theme-txt-primary cursor-pointer border-none bg-transparent flex items-center justify-center"
+                  title="Edit message"
+                >
+                  <Pencil className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm("Are you sure you want to delete this message?")) {
+                      onDelete(message._id);
+                    }
+                  }}
+                  className="p-1 rounded hover:bg-theme-btn-sec-hover text-brand-pink hover:text-brand-pink/80 cursor-pointer border-none bg-transparent flex items-center justify-center"
+                  title="Delete message"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
             )}
+
+            <div
+              className={`px-4 py-2.5 rounded-2xl rounded-br-sm text-sm leading-relaxed wrap-break-word bg-brand-blue text-white shadow-sm ${
+                isOptimistic ? "opacity-60" : "opacity-100"
+              } theme-transition ${isEditing ? "min-w-[200px]" : ""}`}
+            >
+              {isEditing ? (
+                <form onSubmit={handleSave} className="flex items-center gap-2 w-full">
+                  <input
+                    type="text"
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    className="bg-transparent border-none text-sm text-white outline-none flex-1 font-sans"
+                    autoFocus
+                  />
+                  <div className="flex gap-1 shrink-0">
+                    <button type="submit" className="p-1 rounded hover:bg-white/10 text-white cursor-pointer border-none bg-transparent">
+                      <Check className="w-3.5 h-3.5" />
+                    </button>
+                    <button type="button" onClick={() => setIsEditing(false)} className="p-1 rounded hover:bg-white/10 text-white cursor-pointer border-none bg-transparent">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                message.content
+              )}
+            </div>
           </div>
         </div>
       </div>
