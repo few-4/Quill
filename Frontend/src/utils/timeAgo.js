@@ -1,4 +1,4 @@
-// Helper: format date as relative time ("2 hours ago")
+
 export function timeAgo(dateString) {
   if (!dateString) return "recently";
   const now = new Date();

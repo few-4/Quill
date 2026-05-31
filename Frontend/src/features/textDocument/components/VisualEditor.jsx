@@ -7,13 +7,13 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
   const isInitializedRef = useRef(false);
   
-  // Seed the last elements version with the initial database content to prevent duplicate saves on mount
+  
   const initialVersion = Array.isArray(content) 
     ? content.reduce((acc, el) => acc + (el.version || 0), 0) 
     : 0;
   const lastElementsVersionRef = useRef(initialVersion);
 
-  // Set initialized flag after 500ms to allow Excalidraw to complete its mount and load initialData
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       isInitializedRef.current = true;
@@ -21,30 +21,30 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
     return () => clearTimeout(timer);
   }, []);
 
-  // Dynamically sync theme from parent HTML class or localstorage
+  
   useEffect(() => {
     const checkTheme = () => {
       const isLight = document.documentElement.classList.contains("light");
       setTheme(isLight ? "light" : "dark");
     };
 
-    // Initial check
+    
     checkTheme();
 
-    // Create a MutationObserver to listen for document theme class shifts
+    
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
     return () => observer.disconnect();
   }, []);
 
-  // Sync dynamic remote collaborative elements received after the initial load
+  
   useEffect(() => {
     if (excalidrawAPI && content) {
       const incomingElements = Array.isArray(content) ? content : [];
       const incomingVersion = incomingElements.reduce((acc, el) => acc + (el.version || 0), 0);
 
-      // If version is structurally different, update the Excalidraw scene
+      
       if (incomingVersion !== lastElementsVersionRef.current) {
         lastElementsVersionRef.current = incomingVersion;
         excalidrawAPI.updateScene({
@@ -54,8 +54,8 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
     }
   }, [excalidrawAPI, content]);
 
-  // Build the Excalidraw collaborators Map from remoteCursors
-  // Excalidraw expects: Map<string, { pointer: {x,y}, button: 'up'|'down', username, color: {background, stroke} }>
+  
+  
   const collaboratorsMap = new Map();
   Object.values(remoteCursors).forEach((cursor) => {
     if (cursor.x == null || cursor.y == null) return;
@@ -73,10 +73,10 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
   const handleCanvasChange = (elements) => {
     const currentElements = Array.isArray(elements) ? elements : [];
     
-    // Sum element versions to check for structural drawing modifications
+    
     const currentVersion = currentElements.reduce((acc, el) => acc + (el.version || 0), 0);
 
-    // Guard: ignore transient empty canvas event during the initial mount phase if the database is populated
+    
     if (!isInitializedRef.current && currentElements.length === 0 && initialVersion > 0) {
       return;
     }
@@ -90,7 +90,7 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
     }
   };
 
-  // Emit pointer position to collaborators via socket
+  
   const handlePointerUpdate = ({ pointer, button }) => {
     if (!socket || !pointer) return;
     socket.emit('cursor-move', {
@@ -103,7 +103,7 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
   return (
     <div className="w-full h-[calc(100vh-150px)] border border-theme-border/60 bg-theme-card/20 backdrop-blur-md rounded-2xl overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.15)] relative">
       
-      {/* Custom overrides to hide Help (?) and Library buttons in Excalidraw */}
+      {}
       <style>{`
         .excalidraw .help-icon,
         .excalidraw .help-button,
@@ -140,7 +140,7 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
           },
         }}
       >
-        {/* Custom MainMenu with only required utility operations and no external social links */}
+        {}
         <MainMenu>
           <MainMenu.DefaultItems.LoadScene />
           <MainMenu.DefaultItems.SaveAsImage />
@@ -149,7 +149,7 @@ const VisualEditor = ({ content = [], onChange, socket, currentUser, remoteCurso
           <MainMenu.DefaultItems.ToggleTheme />
         </MainMenu>
 
-        {/* Custom WelcomeScreen with Quill branding */}
+        {}
         <WelcomeScreen>
           <WelcomeScreen.Center>
             <div className="flex flex-col items-center select-none cursor-default mb-4">

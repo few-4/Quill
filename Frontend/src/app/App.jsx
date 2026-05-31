@@ -6,11 +6,11 @@ import "./App.scss";
 import store from './app.store.js'
 import { Provider } from 'react-redux'
 
-// Create a client for React Query
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000, 
       retry: false,
       refetchOnWindowFocus: false,
     },
@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  // Restore theme from localStorage on initial load
+  
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "light") {

@@ -21,7 +21,7 @@ const StatCard = ({
       className="bg-theme-card border border-theme-border rounded-2xl p-8 flex flex-col justify-between h-56 theme-transition hover:border-theme-txt-secondary/20 hover:shadow-lg hover:shadow-black/5 cursor-pointer relative overflow-hidden group"
     >
       {!isRecent ? (
-        // Standard count/metric card layout
+        
         <>
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-1">
@@ -45,7 +45,7 @@ const StatCard = ({
           )}
         </>
       ) : (
-        // Recent item preview card layout
+        
         <>
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-1 min-w-0 flex-1">

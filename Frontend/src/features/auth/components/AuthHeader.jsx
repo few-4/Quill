@@ -3,14 +3,7 @@ import { Link } from "react-router";
 import { Sun, Moon } from "lucide-react";
 import { QuillLogo } from "../../../components/QuillLogo";
 
-/**
- * AuthHeader - Shared header for auth pages (Login / Register).
- * Shows the Quill logo, a theme toggle, and an optional auth link on the right.
- *
- * Props:
- *   authLinkTo   - route path for the right-side CTA link
- *   authLinkText - label for the right-side CTA link
- */
+
 const AuthHeader = ({ authLinkTo, authLinkText }) => {
   const [isLight, setIsLight] = useState(() => {
     if (typeof window !== "undefined") {
@@ -46,7 +39,7 @@ const AuthHeader = ({ authLinkTo, authLinkText }) => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-theme-nav-bg backdrop-blur-md border-b border-theme-border theme-transition duration-300">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
-        {/* Logo */}
+        {}
         <Link
           to="/"
           className="text-xl font-bold tracking-tight text-theme-txt-primary flex items-center gap-2 hover:opacity-90 transition-opacity no-underline"
@@ -55,7 +48,7 @@ const AuthHeader = ({ authLinkTo, authLinkText }) => {
           <span>Quill</span>
         </Link>
 
-        {/* Right side — theme toggle + auth link */}
+        {}
         <div className="flex items-center gap-5">
           <button
             onClick={toggleTheme}

@@ -10,30 +10,30 @@ const Homepage = () => {
     <div className="min-h-screen bg-theme-bg text-theme-txt-primary relative overflow-hidden flex flex-col font-sans theme-transition duration-300">
       <Navbar />
 
-      {/* Hero Section */}
+      {}
       <section className="relative pt-32 pb-24 md:pt-40 md:pb-36 flex flex-col items-center justify-center px-6 overflow-hidden border-b border-theme-border/30 theme-transition duration-300">
-        {/* Visual Background grid and glow elements */}
+        {}
         <div className="grid-lines-bg" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_0%,transparent_65%)] pointer-events-none" />
         
-        {/* Custom Animated Cursors depicting Real-Time Collaboration */}
+        {}
         <CollaborativeCursor
           name="Developer"
-          color="#3b82f6" // blue
+          color="#3b82f6" 
           className="top-[32%] left-[8%] md:left-[16%] animate-float-blue"
         />
         <CollaborativeCursor
           name="Designer"
-          color="#ec4899" // pink
+          color="#ec4899" 
           className="top-[52%] right-[8%] md:right-[14%] animate-float-pink"
         />
         <CollaborativeCursor
           name="Product Manager"
-          color="#10b981" // green
+          color="#10b981" 
           className="bottom-[22%] left-[12%] md:left-[24%] animate-float-green"
         />
 
-        {/* Hero Content */}
+        {}
         <div className="max-w-5xl mx-auto text-center relative z-10 flex flex-col items-center">
           <h1 className="text-4xl sm:text-6xl md:text-7.5xl font-extrabold tracking-tight leading-[1.05] text-theme-txt-primary mb-8 font-display theme-transition duration-300">
             Collaborate on docs and <br />
@@ -65,29 +65,29 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Feature Grid Section */}
+      {}
       <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
           
-          {/* Card 1: Live Document Editing */}
+          {}
           <div className="bg-theme-card border border-theme-border rounded-2xl p-6 md:p-8 flex flex-col justify-between overflow-hidden relative group hover:border-theme-txt-secondary/30 theme-transition duration-300">
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/[0.01] pointer-events-none" />
             
-            {/* Image Container Mockup */}
+            {}
             <div className="h-56 sm:h-64 md:h-72 w-full rounded-xl overflow-hidden border border-theme-border relative theme-transition duration-300">
               <img
                 src={liveEditingImg}
                 alt="Live Document Editing UI Mockup"
                 className="w-full h-full object-cover object-center group-hover:scale-[1.015] transition-transform duration-500"
               />
-              {/* Overlay Glassmorphic subtle indicator matching user prompt screenshot */}
+              {}
               <div className="absolute bottom-4 left-4 bg-theme-bg/60 backdrop-blur-md border border-theme-border px-3 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-semibold text-theme-txt-primary theme-transition duration-300">
                 <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                 Live editing active
               </div>
             </div>
 
-            {/* Typography */}
+            {}
             <div className="mt-8">
               <h3 className="text-xl md:text-2xl font-bold text-theme-txt-primary mb-3 theme-transition duration-300">
                 Live Document Editing
@@ -100,13 +100,13 @@ const Homepage = () => {
             </div>
           </div>
 
-          {/* Card 2: Lightning Fast Sync */}
+          {}
           <div className="bg-theme-card border border-theme-border rounded-2xl p-6 md:p-8 flex flex-col justify-between overflow-hidden relative group hover:border-theme-txt-secondary/30 theme-transition duration-300">
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/[0.01] pointer-events-none" />
             
-            {/* Top Section */}
+            {}
             <div>
-              {/* Lightning Box Icon */}
+              {}
               <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-blue-400 mb-8 group-hover:bg-blue-500/15 group-hover:border-blue-500/30 transition-all duration-300">
                 <Zap className="w-5 h-5 fill-blue-400/20" />
               </div>
@@ -121,7 +121,7 @@ const Homepage = () => {
               </p>
             </div>
 
-            {/* Key-Value Metrics */}
+            {}
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-theme-metric border border-theme-border/60 p-4 rounded-xl text-xs sm:text-sm theme-transition duration-300">
                 <span className="text-theme-txt-secondary font-medium theme-transition duration-300">Latency</span>
@@ -140,12 +140,12 @@ const Homepage = () => {
 
         </div>
 
-        {/* Card 3: Architecture & Planning */}
+        {}
         <div className="bg-theme-card border border-theme-border rounded-2xl p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center overflow-hidden hover:border-theme-txt-secondary/30 theme-transition duration-300 group">
           
-          {/* Left Description Column */}
+          {}
           <div className="flex flex-col justify-center h-full">
-            {/* Green Pulse Badge */}
+            {}
             <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase w-max mb-6 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
               Planner Mode
@@ -163,7 +163,7 @@ const Homepage = () => {
             </p>
           </div>
 
-          {/* Right Image Mockup Column */}
+          {}
           <div className="h-56 sm:h-72 md:h-80 w-full rounded-xl overflow-hidden border border-theme-border relative theme-transition duration-300">
             <img
               src={archPlanningImg}
@@ -175,7 +175,7 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Ready to Build CTA Section */}
+      {}
       <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto w-full relative z-10">
         <div className="bg-theme-cta border border-theme-border rounded-3xl p-8 sm:p-12 md:p-16 text-center relative overflow-hidden flex flex-col items-center justify-center theme-transition duration-300">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.01)_0%,transparent_70%)] pointer-events-none" />

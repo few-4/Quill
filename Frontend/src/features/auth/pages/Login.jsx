@@ -27,22 +27,22 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-txt-primary flex flex-col items-center relative font-sans theme-transition duration-300 pt-16">
-      {/* Background grid */}
+      {}
       <div className="grid-lines-bg" />
 
-      {/* Decorative collaborative cursors */}
+      {}
       <CollaborativeCursor name="Plan" color="#3b82f6" className="top-[20%] left-[8%] md:left-[14%]" />
       <CollaborativeCursor name="Design" color="#ec4899" className="top-[50%] right-[7%] md:right-[13%]" />
       <CollaborativeCursor name="Develop" color="#10b981" className="bottom-[20%] left-[10%] md:left-[20%]" />
 
-      {/* Auth header — fixed navbar style */}
+      {}
       <AuthHeader authLinkTo="/sign-up" authLinkText="Sign Up" />
 
-      {/* Main content */}
+      {}
       <main className="flex-1 flex items-start justify-center pt-10 pb-10 w-full relative z-10">
         <div className="w-full max-w-md bg-theme-card border border-theme-border rounded-2xl px-9 pt-10 pb-8 flex flex-col theme-transition duration-300">
 
-          {/* Title */}
+          {}
           <div className="text-center mb-7">
             <h1 className="text-[1.75rem] font-bold leading-tight tracking-[-0.03em] text-theme-txt-primary mb-2.5 theme-transition duration-300">
               Welcome back
@@ -52,7 +52,7 @@ const Login = () => {
             </p>
           </div>
 
-          {/* Form */}
+          {}
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 mb-5">
 
             <div className="flex flex-col gap-1.5">
@@ -113,10 +113,10 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Divider */}
+          {}
           <hr className="border-none border-t border-theme-border mb-5 theme-transition duration-300" />
 
-          {/* Sign up link */}
+          {}
           <p className="text-center text-sm text-theme-txt-secondary/60 theme-transition duration-300">
             Don't have an account?
             <Link to="/sign-up" id="login-signup-link" className="text-theme-txt-primary font-semibold no-underline ml-1 hover:underline">
@@ -126,7 +126,7 @@ const Login = () => {
         </div>
       </main>
 
-      {/* Footer */}
+      {}
       <footer className="w-full flex justify-between items-center px-12 py-6 relative z-10">
         <span className="text-[0.8rem] text-theme-txt-secondary/40 theme-transition duration-300">
           © 2026 Quill Technologies Inc. All rights reserved.

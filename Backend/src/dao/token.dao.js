@@ -1,5 +1,7 @@
 import RefreshToken from "../models/refreshToken.model.js";
 import { ApiError } from "../utils/ApiError.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const saveRefreshToken = async (userId, token, deviceInfo) => {
     try {
@@ -21,10 +23,20 @@ export const deleteRefreshToken = async (userId) => {
 
 export const findRefreshToken = async (token) => {
     try {
-        const refreshToken = await RefreshToken.findOne({ token });
-        return refreshToken;
+        const decoded = jwt.decode(token);
+        if (!decoded || !decoded.userId) {
+            return null;
+        }
+        const userTokens = await RefreshToken.find({ userId: decoded.userId });
+        for (const dbRecord of userTokens) {
+            const isMatch = await bcrypt.compare(token, dbRecord.token);
+            if (isMatch) {
+                return dbRecord;
+            }
+        }
+        return null;
     } catch (error) {
-        throw new ApiError(500, "Error finding refresh token");
+        throw new ApiError(500, "Error finding and verifying refresh token");
     }
 }
 

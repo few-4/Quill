@@ -7,7 +7,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, allWorkspaces = [], onSwitchWorks
   const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false);
   const workspaceDropdownRef = useRef(null);
 
-  // Close workspace dropdown when clicking outside
+  
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (workspaceDropdownRef.current && !workspaceDropdownRef.current.contains(e.target)) {
@@ -29,7 +29,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, allWorkspaces = [], onSwitchWorks
         }`}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          {/* Workspace avatar */}
+          {}
           <div className="w-8 h-8 rounded-lg bg-theme-btn-cta-bg text-theme-btn-cta-text flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
             {currentWorkspace?.name?.charAt(0)?.toUpperCase() || "Q"}
           </div>
@@ -47,17 +47,17 @@ const WorkspaceSwitcher = ({ currentWorkspace, allWorkspaces = [], onSwitchWorks
         }`} />
       </button>
 
-      {/* Workspace Switcher Dropdown */}
+      {}
       {workspaceDropdownOpen && (
         <div className="absolute left-0 right-0 top-full mt-1.5 bg-theme-card border border-theme-border/80 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.18)] z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
-          {/* Header */}
+          {}
           <div className="px-3 py-2.5 border-b border-theme-border/50">
             <p className="text-[10px] font-bold tracking-widest text-theme-txt-secondary/40 uppercase">
               Switch Workspace
             </p>
           </div>
 
-          {/* Workspace list */}
+          {}
           <div className="py-1 max-h-[220px] overflow-y-auto">
             {allWorkspaces.length > 0 ? (
               allWorkspaces.map((ws) => {
@@ -73,7 +73,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, allWorkspaces = [], onSwitchWorks
                       isActive ? "bg-brand-blue/5" : ""
                     }`}
                   >
-                    {/* Mini avatar */}
+                    {}
                     <div className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center font-bold text-xs ${
                       isActive 
                         ? "bg-brand-blue text-white" 
@@ -104,7 +104,7 @@ const WorkspaceSwitcher = ({ currentWorkspace, allWorkspaces = [], onSwitchWorks
             )}
           </div>
 
-          {/* Footer: manage workspaces */}
+          {}
           <div className="border-t border-theme-border/50 p-1.5">
             <button
               onClick={() => { setWorkspaceDropdownOpen(false); navigate("/workspace"); }}

@@ -5,7 +5,7 @@ import { Palette, FileText } from 'lucide-react';
 const NavDocumentDropdown = ({ workspaceId, documentId, activeDocument, allDocuments = [] }) => {
   return (
     <div className="mt-1 mb-1.5 ml-3 flex flex-col gap-0.5">
-      {/* Currently open document */}
+      {}
       <NavLink
         to={`/documents/${workspaceId}/document/${documentId}`}
         className={({ isActive }) =>
@@ -18,19 +18,19 @@ const NavDocumentDropdown = ({ workspaceId, documentId, activeDocument, allDocum
       >
         {({ isActive }) => (
           <>
-            {/* Left border accent */}
+            {}
             <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full transition-all duration-200 ${
               isActive ? "bg-brand-blue" : "bg-transparent group-hover:bg-theme-txt-secondary/20"
             }`} />
 
-            {/* Document type icon */}
+            {}
             {activeDocument?.type === "visual" ? (
               <Palette className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-brand-blue" : "text-theme-txt-secondary/50 group-hover:text-theme-txt-primary"}`} />
             ) : (
               <FileText className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-brand-blue" : "text-theme-txt-secondary/50 group-hover:text-theme-txt-primary"}`} />
             )}
 
-            {/* Title + type badge */}
+            {}
             <div className="flex flex-col min-w-0 flex-1">
               <span className="truncate leading-tight" title={activeDocument?.title}>
                 {activeDocument?.title || "Untitled Document"}
@@ -42,7 +42,7 @@ const NavDocumentDropdown = ({ workspaceId, documentId, activeDocument, allDocum
               </span>
             </div>
 
-            {/* Active dot */}
+            {}
             {isActive && (
               <span className="w-1.5 h-1.5 rounded-full bg-brand-blue shrink-0" />
             )}
@@ -50,7 +50,7 @@ const NavDocumentDropdown = ({ workspaceId, documentId, activeDocument, allDocum
         )}
       </NavLink>
 
-      {/* Recent docs from the same workspace (excluding current) */}
+      {}
       {allDocuments
         .filter((d) => d._id !== documentId)
         .slice(0, 3)
@@ -72,7 +72,7 @@ const NavDocumentDropdown = ({ workspaceId, documentId, activeDocument, allDocum
           </NavLink>
         ))}
 
-      {/* "All documents" link */}
+      {}
       {allDocuments.length > 0 && (
         <NavLink
           to={`/documents/${workspaceId}`}

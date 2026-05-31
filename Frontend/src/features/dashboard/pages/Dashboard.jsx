@@ -29,7 +29,7 @@ const Dashboard = () => {
     }
   }, [location.pathname, workspaceId, dispatch]);
 
-  // Connect to workspace chat in background to track incoming messages for the unread badge
+  
   useEffect(() => {
     if (!accessToken || !workspaceId) return;
 
@@ -70,7 +70,7 @@ const Dashboard = () => {
 
   return (
     <div className="w-full h-screen flex bg-theme-bg text-theme-txt-primary font-sans theme-transition duration-300 overflow-hidden relative">
-      {/* Sidebar Drawer Backdrop for Mobile */}
+      {}
       {isMobileMenuOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs md:hidden"
@@ -78,16 +78,16 @@ const Dashboard = () => {
         />
       )}
 
-      {/* Left Nav Bar container - sliding drawer on mobile, relative on desktop */}
+      {}
       <div className={`fixed inset-y-0 left-0 z-50 md:relative md:flex shrink-0 transition-transform duration-300 md:translate-x-0 ${
         isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       }`}>
         <LeftNavBar onCloseMobileMenu={() => setIsMobileMenuOpen(false)} />
       </div>
 
-      {/* Main Content Layout */}
+      {}
       <div className="flex-1 h-full flex flex-col bg-theme-bg border-l border-theme-border/20 theme-transition duration-300 relative overflow-hidden">
-        {/* Mobile Top Navigation Header */}
+        {}
         <header className="flex md:hidden items-center justify-between px-4 py-3 border-b border-theme-border bg-theme-card theme-transition shrink-0 z-30">
           <button
             onClick={() => setIsMobileMenuOpen(true)}
@@ -101,12 +101,12 @@ const Dashboard = () => {
           <div className="w-9" />
         </header>
 
-        {/* Main scrollable body */}
+        {}
         <div className="flex-1 overflow-y-auto w-full h-full relative">
-          {/* Background Subtle Gradient */}
+          {}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
-          {/* Child Router Outlet */}
+          {}
           <Outlet />
         </div>
       </div>

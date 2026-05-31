@@ -23,20 +23,20 @@ const DocumentPage = () => {
 
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  // Map of socketId → { socketId, userId, username, color, from, to, x, y, button }
+  
   const [remoteCursors, setRemoteCursors] = useState({});
   const saveTimeoutRef = useRef(null);
   const hasInitializedMode = useRef(null);
-  // Track the last time the local user made an edit so we can defer remote
-  // content updates that would otherwise overwrite in-progress typing
+  
+  
   const lastLocalEditTimeRef = useRef(0);
   const pendingRemoteUpdateRef = useRef(null);
   const pendingUpdateTimerRef = useRef(null);
-  // How long (ms) to defer a remote update while the user is actively editing.
-  // Matches the text-editor debounce (1 s) + small buffer.
+  
+  
   const TEXT_EDIT_WINDOW_MS = 1200;
 
-  // Initialize socket connection & join document room
+  
   useEffect(() => {
     if (!accessToken || !documentId) return;
 
@@ -63,7 +63,7 @@ const DocumentPage = () => {
       });
       setOnlineUsers(uniqueUsers);
 
-      // Remove cursors for users that are no longer in the room
+      
       setRemoteCursors((prev) => {
         const socketIds = new Set(users.map((u) => u.socketId));
         const next = { ...prev };
@@ -74,7 +74,7 @@ const DocumentPage = () => {
       });
     });
 
-    // Listen for collaborative document updates from other users in real time
+    
     newSocket.on("document-updated", ({ textContent, visualContent, yDocState, type, senderSocketId }) => {
       if (senderSocketId === newSocket.id) return;
 
@@ -90,18 +90,18 @@ const DocumentPage = () => {
         });
       };
 
-      // For the visual canvas, apply immediately (drawing doesn't have a typing window)
-      // For text edits, defer if the local user is mid-keystroke to prevent their
-      // in-progress text from being overwritten by the remote setContent call.
+      
+      
+      
       const isTextUpdate = textContent !== undefined;
       const timeSinceLocalEdit = Date.now() - lastLocalEditTimeRef.current;
 
       if (isTextUpdate && timeSinceLocalEdit < TEXT_EDIT_WINDOW_MS) {
-        // Queue this update — overwrite any older pending one (last-remote-wins while deferred)
+        
         pendingRemoteUpdateRef.current = { textContent, visualContent, yDocState, type };
 
         if (pendingUpdateTimerRef.current) clearTimeout(pendingUpdateTimerRef.current);
-        // Apply after the user's edit window expires
+        
         pendingUpdateTimerRef.current = setTimeout(() => {
           const pending = pendingRemoteUpdateRef.current;
           if (pending) {
@@ -110,7 +110,7 @@ const DocumentPage = () => {
           }
         }, TEXT_EDIT_WINDOW_MS - timeSinceLocalEdit);
       } else {
-        // Safe to apply immediately (visual canvas, or user hasn't typed recently)
+        
         applyRemoteUpdate(textContent, visualContent, yDocState, type);
       }
     });
@@ -122,7 +122,7 @@ const DocumentPage = () => {
       });
     });
 
-    // Track remote collaborator cursors in real time
+    
     newSocket.on("remote-cursor", (cursorData) => {
       setRemoteCursors((prev) => ({
         ...prev,
@@ -136,7 +136,7 @@ const DocumentPage = () => {
     };
   }, [accessToken, documentId, queryClient]);
 
-  // Synchronize the default mode according to document's type on first load
+  
   useEffect(() => {
     if (document && hasInitializedMode.current !== documentId) {
       setIsVisualMode(document.type === "visual" || document.type === "excalidraw");
@@ -144,19 +144,19 @@ const DocumentPage = () => {
     }
   }, [document, documentId]);
 
-  // Debounced save-document handler with dynamic delays (150ms for ultra-responsive Canvas drawing, 1000ms for text)
+  
   const handleContentChange = (newContent) => {
-    // Stamp the edit time so the remote-update gate knows the user is actively typing
+    
     if (!isVisualMode) {
       lastLocalEditTimeRef.current = Date.now();
-      // Cancel any pending deferred remote update — our local version is now the truth
+      
       if (pendingUpdateTimerRef.current) {
         clearTimeout(pendingUpdateTimerRef.current);
         pendingRemoteUpdateRef.current = null;
       }
     }
 
-    // Update local React Query cache immediately to prevent stale states and feedback loops
+    
     queryClient.setQueryData(["document", documentId], (oldData) => {
       if (!oldData) return oldData;
       const newData = { ...oldData };
@@ -200,7 +200,7 @@ const DocumentPage = () => {
   const handleModeToggle = (visualMode) => {
     setIsVisualMode(visualMode);
 
-    // Instantly update the document type in our React Query cache to stay in sync
+    
     queryClient.setQueryData(["document", documentId], (oldData) => {
       if (!oldData) return oldData;
       return {
@@ -209,13 +209,13 @@ const DocumentPage = () => {
       };
     });
 
-    // Save the document type change in the database
+    
     if (socket) {
       socket.emit("save-document", { type: visualMode ? "visual" : "text" });
     }
   };
 
-  // Clean timeouts on unmount
+  
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) {
@@ -242,7 +242,7 @@ const DocumentPage = () => {
         currentUser={currentUser}
         socket={socket}
       />
-      {/* Editor */}
+      {}
       <main className={`flex-1 w-full mx-auto p-2 sm:p-6 z-10 ${isVisualMode ? "max-w-none px-2 sm:px-6 md:px-10" : "max-w-5xl"}`}>
         {isVisualMode ? (
           <VisualEditor

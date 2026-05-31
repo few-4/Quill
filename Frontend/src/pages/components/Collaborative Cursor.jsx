@@ -3,7 +3,7 @@ import React, { memo } from "react";
 const CollaborativeCursor = memo(({ name, color, className }) => {
   return (
     <div className={`hidden md:flex absolute items-start gap-1 z-10 pointer-events-none select-none ${className}`}>
-      {/* SVG Mouse Cursor Arrow */}
+      {}
       <svg
         width="16"
         height="16"
@@ -18,11 +18,11 @@ const CollaborativeCursor = memo(({ name, color, className }) => {
         />
       </svg>
       
-      {/* User Name Pill Tag */}
+      {}
       <div
         className="px-2.5 py-1 rounded-md text-[10px] font-semibold text-white tracking-wide shadow-lg border backdrop-blur-md"
         style={{
-          backgroundColor: `${color}cc`, // Add slight transparency
+          backgroundColor: `${color}cc`, 
           borderColor: color,
           boxShadow: `0 4px 12px ${color}33`,
         }}

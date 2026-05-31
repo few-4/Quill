@@ -115,7 +115,7 @@ const Templates = () => {
         </p>
       </header>
 
-      {/* Category filter tabs */}
+      {}
       <div className="flex items-center gap-2 mb-8 flex-wrap">
         {[{ id: "all", label: "All" }, ...TEMPLATE_CATEGORIES].map((cat) => (
           <button
@@ -132,7 +132,7 @@ const Templates = () => {
         ))}
       </div>
 
-      {/* Template grid */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 pb-8">
         {filtered.map((template) => (
           <TemplateCard

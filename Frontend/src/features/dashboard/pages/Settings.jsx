@@ -147,7 +147,7 @@ const Settings = () => {
   return (
     <div className="w-full h-full flex flex-col md:flex-row overflow-hidden">
 
-      {/* ── Left sidebar nav ── */}
+      {}
       <aside className="w-full md:w-60 shrink-0 border-b md:border-b-0 md:border-r border-theme-border bg-theme-card flex flex-row md:flex-col pt-4 md:pt-8 pb-3 md:pb-4 theme-transition overflow-x-auto select-none">
         <div className="hidden md:block px-5 mb-6 shrink-0">
           <p className="text-[10px] font-bold tracking-widest text-theme-txt-secondary/40 uppercase mb-0.5">Workspace</p>
@@ -183,7 +183,7 @@ const Settings = () => {
         </nav>
       </aside>
 
-      {/* ── Main content ── */}
+      {}
       <div className="flex-1 overflow-y-auto px-4 md:px-10 py-6 md:py-10 theme-transition">
         <div className="max-w-2xl w-full mx-auto flex flex-col gap-8">
 

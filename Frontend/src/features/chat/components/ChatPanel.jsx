@@ -167,7 +167,7 @@ const ChatPanel = ({ workspaceId }) => {
   return (
     <div className="w-full h-full flex bg-theme-bg theme-transition">
 
-      {/* ── Left: sidebar info panel ── */}
+      {}
       <aside className={`hidden lg:flex flex-col shrink-0 border-r border-theme-border bg-theme-card theme-transition transition-all duration-300 ${
         isSidebarCollapsed ? "w-0 border-r-0 opacity-0 overflow-hidden" : "w-64 opacity-100"
       }`}>
@@ -220,10 +220,10 @@ const ChatPanel = ({ workspaceId }) => {
         </div>
       </aside>
 
-      {/* ── Right: chat area ── */}
+      {}
       <div className="flex-1 flex flex-col min-w-0 h-full">
 
-        {/* Chat header */}
+        {}
         <div className="flex items-center gap-3 px-6 py-4 border-b border-theme-border bg-theme-card theme-transition shrink-0">
           <button
             onClick={() => {
@@ -255,7 +255,7 @@ const ChatPanel = ({ workspaceId }) => {
           </div>
         </div>
 
-        {/* Messages */}
+        {}
         <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-2 min-h-0">
           {isLoading ? (
             <div className="flex-1 flex items-center justify-center h-full">
@@ -300,10 +300,10 @@ const ChatPanel = ({ workspaceId }) => {
           <div ref={bottomRef} />
         </div>
 
-        {/* Typing indicator */}
+        {}
         {typingUsers.length > 0 && (
           <div className="px-6 py-1.5 shrink-0 bg-theme-bg flex items-center gap-2 text-xs text-theme-txt-secondary/50 font-medium animate-in fade-in slide-in-from-bottom-2 duration-300">
-            {/* Animated Typing dots */}
+            {}
             <div className="flex gap-1 items-center shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-bounce" style={{ animationDelay: "0ms" }} />
               <span className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -315,7 +315,7 @@ const ChatPanel = ({ workspaceId }) => {
           </div>
         )}
 
-        {/* Input */}
+        {}
         <ChatInput
           onSend={handleSend}
           isPending={isPending}

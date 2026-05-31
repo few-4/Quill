@@ -6,7 +6,7 @@ import { QuillLogo } from "../../components/QuillLogo";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   
-  // Local React state for checking theme (light/dark)
+  
   const [isLight, setIsLight] = useState(() => {
     if (typeof window !== "undefined") {
       return document.documentElement.classList.contains("light");
@@ -14,7 +14,7 @@ export default function Navbar() {
     return false;
   });
 
-  // Sync state with DOM on mount
+  
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "light") {
@@ -26,7 +26,7 @@ export default function Navbar() {
     }
   }, []);
 
-  // Theme Toggler
+  
   const toggleTheme = () => {
     const nextLight = !isLight;
     setIsLight(nextLight);
@@ -45,7 +45,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-theme-nav-bg backdrop-blur-md border-b border-theme-border theme-transition duration-300">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         
-        {/* Logo */}
+        {}
         <div className="flex items-center gap-2">
           <Link to="/" className="text-xl font-bold tracking-tight text-theme-txt-primary flex items-center gap-2 hover:opacity-90 transition-opacity no-underline">
             <QuillLogo className="w-6.5 h-6.5" />
@@ -53,7 +53,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop Navigation Links */}
+        {}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
@@ -66,9 +66,9 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right Action Utilities */}
+        {}
         <div className="hidden md:flex items-center gap-5">
-          {/* Theme Toggle Icon Button */}
+          {}
           <button 
             onClick={toggleTheme}
             className="p-2 text-theme-txt-secondary hover:text-theme-txt-primary hover:bg-theme-btn-sec-hover rounded-lg theme-transition duration-200 cursor-pointer"
@@ -96,7 +96,7 @@ export default function Navbar() {
           </NavLink>
         </div>
 
-        {/* Mobile Menu Button */}
+        {}
         <div className="md:hidden flex items-center gap-4">
           <button 
             onClick={toggleTheme}
@@ -119,7 +119,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Panel */}
+      {}
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-theme-bg border-b border-theme-border px-6 py-6 space-y-4 flex flex-col theme-transition duration-300">
           {navLinks.map((link) => (

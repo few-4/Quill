@@ -22,7 +22,7 @@ export const authSlice = createSlice({
     },
     setAccessToken: (state, action) => {
       state.accessToken = action.payload;
-      // Persist token to localStorage so it survives page refreshes
+      
       if (action.payload) {
         localStorage.setItem(TOKEN_KEY, action.payload);
       } else {
