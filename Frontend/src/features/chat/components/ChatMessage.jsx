@@ -74,7 +74,7 @@ const ChatMessage = ({ message, isOwn, grouped = false, onEdit, onDelete }) => {
                       onDelete(message._id);
                     }
                   }}
-                  className="p-1 rounded hover:bg-theme-btn-sec-hover text-brand-pink hover:text-brand-pink/80 cursor-pointer border-none bg-transparent flex items-center justify-center"
+                  className="p-1 rounded hover:bg-theme-btn-sec-hover text-theme-txt-secondary hover:text-theme-txt-primary/80 cursor-pointer border-none bg-transparent flex items-center justify-center"
                   title="Delete message"
                 >
                   <Trash2 className="w-3 h-3" />
