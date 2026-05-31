@@ -36,7 +36,7 @@ Quill is a high-fidelity, full-stack collaborative workspace platform designed f
 - **Libraries**: Lucide-React, React-Router v7, Socket.io-client
 
 ### Backend (Server)
-- **Framework**: Express 5 (Advanced wildcards using `path-to-regexp v8`, native async handler error catching)
+- **Framework**: Express 5
 - **Real-time Engine**: Socket.io (Namespaces, heartbeats, automatic reconnection, dynamic rooms)
 - **Database (ODM)**: MongoDB + Mongoose
 - **Security**: JWT Authentication (HTTP-Only Cookie storage), custom WebSockets handshake authentication middleware
@@ -174,5 +174,3 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
     ```
 
 ---
-
-*Developed with ❤️ as a modern collaboration hub.*
