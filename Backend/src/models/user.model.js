@@ -26,18 +26,9 @@ const userSchema = new mongoose.Schema({
     },
     isVerified: {
         type: Boolean,
-        default: false,
-    },
-    otp: String,
-    otpExpiry: Date,
-    forgotPasswordOtp: String,
-    forgotPasswordOtpExpiry: Date
+        default: true
+    }
 }, { timestamps: true });
-
-userSchema.index({ createdAt: 1 }, { 
-  expireAfterSeconds: 600, 
-  partialFilterExpression: { isVerified: false } 
-});
 
 const User = mongoose.model("User", userSchema);
 

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { FileText, Plus, Search, X } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useDocuments, useDeleteDocument, useRenameDocument } from "../hooks/useDashboard";
 import { useDebounce } from "../../../hooks/useDebounce";
 import CreateDocumentModal from "../../../modal/CreateDocumentModal";
@@ -34,6 +34,8 @@ const EmptyState = ({ isFiltered, query, onClear }) => (
 const Documents = () => {
   const navigate = useNavigate();
   const { workspaceId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filterType = searchParams.get("type");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [docToDelete, setDocToDelete] = useState(null);
@@ -47,10 +49,15 @@ const Documents = () => {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const activeSearchQuery = searchQuery === "" ? "" : debouncedSearchQuery;
 
-  const filtered = useMemo(
-    () => documents.filter((d) => d.title?.toLowerCase().includes(activeSearchQuery.toLowerCase())),
-    [documents, activeSearchQuery]
-  );
+  const filtered = useMemo(() => {
+    let list = documents;
+    if (filterType === "text") {
+      list = list.filter((d) => d.type === "text");
+    } else if (filterType === "visual") {
+      list = list.filter((d) => d.type === "visual");
+    }
+    return list.filter((d) => d.title?.toLowerCase().includes(activeSearchQuery.toLowerCase()));
+  }, [documents, activeSearchQuery, filterType]);
 
 
   const handleConfirmDelete = () => {
@@ -79,6 +86,32 @@ const Documents = () => {
       </header>
 
       <div className="bg-theme-card border border-theme-border rounded-2xl p-6 theme-transition w-full max-w-5xl flex flex-col gap-6">
+        <div className="flex gap-2 flex-wrap">
+          {[
+            { label: "All Documents", value: null },
+            { label: "Text Documents", value: "text" },
+            { label: "Canvases", value: "visual" },
+          ].map((tab) => (
+            <button
+              key={tab.label}
+              onClick={() => {
+                if (tab.value) {
+                  setSearchParams({ type: tab.value });
+                } else {
+                  setSearchParams({});
+                }
+              }}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold theme-transition cursor-pointer ${
+                filterType === tab.value
+                  ? "bg-brand-blue/10 text-brand-blue border border-brand-blue/20"
+                  : "bg-theme-bg/50 text-theme-txt-secondary hover:text-theme-txt-primary border border-theme-border/60 hover:bg-theme-btn-sec-hover"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-theme-border bg-theme-bg flex-1 max-w-md theme-transition focus-within:border-brand-blue/40 focus-within:ring-2 focus-within:ring-brand-blue/10">
             <Search className="w-4 h-4 text-theme-txt-secondary/50 shrink-0" />

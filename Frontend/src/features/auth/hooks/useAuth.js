@@ -1,12 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   register as registerApi,
-  verifyOTP as verifyOtpApi,
   login as loginApi,
   logout as logoutApi,
   getMe,
-  forgotPassword as forgotPasswordApi,
-  resetPassword as resetPasswordApi,
 } from "../services/auth.api";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
@@ -20,10 +17,16 @@ export const useAuth = () => {
 
   const handleRegister = () => useMutation({
     mutationFn: registerApi,
-    onSuccess: (data, variables) => {
-      dispatch(setUser({ email: variables.email }));
-      queryClient.setQueryData(["register-email"], variables.email);
-      navigate("/verify-otp");
+    onSuccess: (response) => {
+      const { user, token } = response.data || {};
+      dispatch(setUser({
+        id: user?._id,
+        email: user?.email,
+        username: user?.username,
+        fullname: user?.fullname,
+      }));
+      dispatch(setAccessToken(token));
+      navigate("/workspace");
     },
     onError: () => {},
   });
@@ -39,23 +42,6 @@ export const useAuth = () => {
         fullname: user?.fullname,
       }));
       dispatch(setAccessToken(token));
-      navigate("/workspace");
-    },
-    onError: () => {},
-  });
-
-  const handleVerifyOTP = () => useMutation({
-    mutationFn: verifyOtpApi,
-    onSuccess: (response) => {
-      const { user, token } = response.data || {};
-      dispatch(setUser({
-        id: user?._id,
-        email: user?.email,
-        username: user?.username,
-        fullname: user?.fullname,
-      }));
-      dispatch(setAccessToken(token));
-      queryClient.removeQueries({ queryKey: ["register-email"] });
       navigate("/workspace");
     },
     onError: () => {},
@@ -92,15 +78,5 @@ export const useAuth = () => {
     },
   });
 
-  const handleForgotPassword = () => useMutation({
-    mutationFn: forgotPasswordApi,
-    onError: () => {},
-  });
-
-  const handleResetPassword = () => useMutation({
-    mutationFn: resetPasswordApi,
-    onError: () => {},
-  });
-
-  return { handleRegister, handleLogin, handleVerifyOTP, handleGetMe, handleLogout, handleForgotPassword, handleResetPassword };
+  return { handleRegister, handleLogin, handleGetMe, handleLogout };
 };

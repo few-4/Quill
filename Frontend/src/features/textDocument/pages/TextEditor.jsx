@@ -243,7 +243,7 @@ const DocumentPage = () => {
         socket={socket}
       />
       {/* Editor */}
-      <main className="flex-1 w-full max-w-4xl mx-auto p-6 z-10">
+      <main className={`flex-1 w-full mx-auto p-2 sm:p-6 z-10 ${isVisualMode ? "max-w-none px-2 sm:px-6 md:px-10" : "max-w-5xl"}`}>
         {isVisualMode ? (
           <VisualEditor
             content={document?.visualContent}

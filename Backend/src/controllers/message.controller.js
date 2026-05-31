@@ -33,3 +33,40 @@ export const getMessages = asyncHandler(async (req, res) => {
 
   return new ApiResponse(200, messages, "Messages fetched successfully").send(res);
 });
+
+export const editMessage = asyncHandler(async (req, res) => {
+  const { messageId } = req.params;
+  const { content } = req.body;
+  const userId = req.user.userId;
+
+  const message = await MessageDAO.getMessageById(messageId);
+  if (!message) {
+    throw new ApiError(404, "Message not found");
+  }
+
+  if (message.senderId.toString() !== userId.toString()) {
+    throw new ApiError(403, "You do not have permission to edit this message");
+  }
+
+  const updatedMessage = await MessageDAO.updateMessage(messageId, content.trim());
+
+  return new ApiResponse(200, updatedMessage, "Message edited successfully").send(res);
+});
+
+export const deleteMessage = asyncHandler(async (req, res) => {
+  const { messageId } = req.params;
+  const userId = req.user.userId;
+
+  const message = await MessageDAO.getMessageById(messageId);
+  if (!message) {
+    throw new ApiError(404, "Message not found");
+  }
+
+  if (message.senderId.toString() !== userId.toString()) {
+    throw new ApiError(403, "You do not have permission to delete this message");
+  }
+
+  await MessageDAO.deleteMessage(messageId);
+
+  return new ApiResponse(200, { messageId }, "Message deleted successfully").send(res);
+});

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchMessages, postMessage } from "../services/chat.api";
+import { fetchMessages, postMessage, putEditMessage, deleteMessage } from "../services/chat.api";
 
 export const useMessages = (workspaceId) =>
   useQuery({
@@ -41,6 +41,36 @@ export const useSendMessage = (workspaceId) => {
       queryClient.setQueryData(["messages", workspaceId], (old) => {
         const filtered = (old?.data ?? []).filter((m) => !m._id?.startsWith("optimistic-"));
         return { ...old, data: [...filtered, data.data] };
+      });
+    },
+  });
+};
+
+export const useEditMessage = (workspaceId) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: putEditMessage,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["messages", workspaceId], (old) => {
+        const currentData = old?.data ?? [];
+        const updated = currentData.map((m) => m._id === data.data._id ? data.data : m);
+        return { ...old, data: updated };
+      });
+    },
+  });
+};
+
+export const useDeleteMessage = (workspaceId) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteMessage,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["messages", workspaceId], (old) => {
+        const currentData = old?.data ?? [];
+        const filtered = currentData.filter((m) => m._id !== data.data.messageId);
+        return { ...old, data: filtered };
       });
     },
   });

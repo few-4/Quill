@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { io } from "socket.io-client";
 import { MessageSquare, Users, Hash, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { useMessages, useSendMessage } from "../hooks/useChat";
+import { useMessages, useSendMessage, useEditMessage, useDeleteMessage } from "../hooks/useChat";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 
@@ -23,6 +23,8 @@ const ChatPanel = ({ workspaceId }) => {
 
   const { data: messages = [], isLoading } = useMessages(workspaceId);
   const { mutate: sendMsg, isPending } = useSendMessage(workspaceId);
+  const { mutate: editMsg } = useEditMessage(workspaceId);
+  const { mutate: deleteMsg } = useDeleteMessage(workspaceId);
 
   const handleTyping = (isTyping) => {
     if (socketRef.current) {
@@ -48,6 +50,22 @@ const ChatPanel = ({ workspaceId }) => {
         const alreadyExists = currentData.some((m) => m._id === message._id);
         if (alreadyExists) return old;
         return { ...old, data: [...currentData, message] };
+      });
+    });
+
+    socket.on("workspace-message-edited", ({ message }) => {
+      queryClient.setQueryData(["messages", workspaceId], (old) => {
+        const currentData = old?.data ?? [];
+        const updated = currentData.map((m) => m._id === message._id ? message : m);
+        return { ...old, data: updated };
+      });
+    });
+
+    socket.on("workspace-message-deleted", ({ messageId }) => {
+      queryClient.setQueryData(["messages", workspaceId], (old) => {
+        const currentData = old?.data ?? [];
+        const filtered = currentData.filter((m) => m._id !== messageId);
+        return { ...old, data: filtered };
       });
     });
 
@@ -105,6 +123,35 @@ const ChatPanel = ({ workspaceId }) => {
         },
       }
     );
+  };
+
+  const handleEdit = (messageId, content) => {
+    editMsg(
+      { messageId, content },
+      {
+        onSuccess: (data) => {
+          if (socketRef.current) {
+            socketRef.current.emit("edit-workspace-message", {
+              workspaceId,
+              message: data.data,
+            });
+          }
+        },
+      }
+    );
+  };
+
+  const handleDelete = (messageId) => {
+    deleteMsg(messageId, {
+      onSuccess: (data) => {
+        if (socketRef.current) {
+          socketRef.current.emit("delete-workspace-message", {
+            workspaceId,
+            messageId: data.data.messageId,
+          });
+        }
+      },
+    });
   };
 
   const isOwnMessage = (msg) => {
@@ -243,6 +290,8 @@ const ChatPanel = ({ workspaceId }) => {
                     message={msg}
                     isOwn={own}
                     grouped={isGrouped}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
                   />
                 );
               })}

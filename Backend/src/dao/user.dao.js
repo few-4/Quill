@@ -37,9 +37,9 @@ export const findUserForLogin = async (email) => {
     }
 }
 
-export const createUser = async (username, email, password, fullname, otp, otpExpiry) => {
+export const createUser = async (username, email, password, fullname) => {
     try {
-        const user = await User.create({ username, email, password, fullname, otp, otpExpiry })
+        const user = await User.create({ username, email, password, fullname, isVerified: true })
         return user;
     } catch (error) {
         throw new ApiError(500, "Error creating user");
@@ -55,29 +55,6 @@ export const deleteUser = async (userId) => {
     }
 }
 
-export const updateUserVerification = async (userId) => {
-    try {
-        const user = await User.findByIdAndUpdate(userId, {
-            $set: { isVerified: true },
-            $unset: { otp: 1, otpExpiry: 1 }
-        }, { returnDocument: 'after' });
-        return user;
-    } catch (error) {
-        throw new ApiError(500, "Error updating user verification");
-    }
-}
-
-export const updateUserOtp = async (userId, otp, otpExpiry) => {
-    try {
-        const user = await User.findByIdAndUpdate(userId, {
-            $set: { otp, otpExpiry }
-        }, { returnDocument: 'after' });
-        return user;
-    } catch (error) {
-        throw new ApiError(500, "Error updating user OTP");
-    }
-}
-
 export const findUserById = async (userId) => {
     try {
         const user = await User.findById(userId);
@@ -87,22 +64,10 @@ export const findUserById = async (userId) => {
     }
 }
 
-export const updateUserForgotPasswordOtp = async (userId, otp, otpExpiry) => {
-    try {
-        const user = await User.findByIdAndUpdate(userId, {
-            $set: { forgotPasswordOtp: otp, forgotPasswordOtpExpiry: otpExpiry }
-        }, { returnDocument: "after" });
-        return user;
-    } catch (error) {
-        throw new ApiError(500, "Error updating forgot password OTP");
-    }
-}
-
 export const updateUserPassword = async (userId, password) => {
     try {
         const user = await User.findByIdAndUpdate(userId, {
-            $set: { password },
-            $unset: { forgotPasswordOtp: 1, forgotPasswordOtpExpiry: 1 }
+            $set: { password }
         }, { returnDocument: "after" });
         return user;
     } catch (error) {

@@ -10,3 +10,13 @@ export async function postMessage({ workspaceId, content }) {
   const response = await api.post(`message/${workspaceId}`, { content });
   return response.data;
 }
+
+export async function putEditMessage({ messageId, content }) {
+  const response = await api.put(`message/${messageId}`, { content });
+  return response.data;
+}
+
+export async function deleteMessage(messageId) {
+  const response = await api.delete(`message/${messageId}`);
+  return response.data;
+}

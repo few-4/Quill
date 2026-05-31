@@ -70,14 +70,9 @@ const Login = () => {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <div className="flex justify-between items-center">
-                <label htmlFor="login-password" className="text-[0.8125rem] font-medium text-theme-txt-primary tracking-[-0.01em] theme-transition duration-300">
-                  Password
-                </label>
-                <Link to="/forgot-password" className="text-[0.8rem] text-theme-txt-secondary/50 no-underline hover:text-theme-txt-secondary theme-transition duration-200">
-                  Forgot password?
-                </Link>
-              </div>
+              <label htmlFor="login-password" className="text-[0.8125rem] font-medium text-theme-txt-primary tracking-[-0.01em] theme-transition duration-300">
+                Password
+              </label>
               <div className="relative">
                 <input
                   {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })}

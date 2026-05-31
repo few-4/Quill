@@ -37,3 +37,27 @@ export const getMessagesValidator = [
 
   validate,
 ];
+
+export const editMessageValidator = [
+  param("messageId")
+    .trim()
+    .notEmpty().withMessage("Message ID is required")
+    .isMongoId().withMessage("Message ID is not a valid MongoDB ID"),
+
+  body("content")
+    .trim()
+    .notEmpty().withMessage("Message content is required")
+    .isString().withMessage("Message content must be a string")
+    .isLength({ min: 1, max: 1000 }).withMessage("Message must be between 1 and 1000 characters"),
+
+  validate,
+];
+
+export const deleteMessageValidator = [
+  param("messageId")
+    .trim()
+    .notEmpty().withMessage("Message ID is required")
+    .isMongoId().withMessage("Message ID is not a valid MongoDB ID"),
+
+  validate,
+];

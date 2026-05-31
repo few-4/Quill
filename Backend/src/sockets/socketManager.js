@@ -138,6 +138,16 @@ export const initializeSocket = (server) => {
             socket.to(chatRoom).emit("new-workspace-message", { message });
         });
 
+        socket.on("edit-workspace-message", ({ workspaceId, message }) => {
+            const chatRoom = `chat:${workspaceId}`;
+            socket.to(chatRoom).emit("workspace-message-edited", { message });
+        });
+
+        socket.on("delete-workspace-message", ({ workspaceId, messageId }) => {
+            const chatRoom = `chat:${workspaceId}`;
+            socket.to(chatRoom).emit("workspace-message-deleted", { messageId });
+        });
+
         socket.on("leave-workspace-chat", ({ workspaceId }) => {
             const chatRoom = `chat:${workspaceId}`;
             socket.leave(chatRoom);

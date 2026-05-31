@@ -47,7 +47,7 @@ const DashboardHome = () => {
           Icon={FileText}
           iconColorClass="bg-brand-blue/10 text-brand-blue"
           description="Rich-text documentation, meeting minutes, and workspace wikis."
-          onClick={() => navigate(`/documents/${workspaceId}`)}
+          onClick={() => navigate(`/documents/${workspaceId}?type=text`)}
         />
         <StatCard
           title="Visual Canvases"
@@ -56,7 +56,7 @@ const DashboardHome = () => {
           Icon={Palette}
           iconColorClass="bg-brand-pink/10 text-brand-pink"
           description="Visual whiteboards, interactive diagrams, and user flows."
-          onClick={() => navigate(`/documents/${workspaceId}`)}
+          onClick={() => navigate(`/documents/${workspaceId}?type=visual`)}
         />
         <StatCard
           title="Recent Document"

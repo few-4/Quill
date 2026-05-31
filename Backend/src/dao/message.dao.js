@@ -25,3 +25,18 @@ export const getMessagesByWorkspace = async (workspaceId, limit = 50, before = n
 
   return messages.reverse();
 };
+
+export const getMessageById = async (messageId) => {
+  return await Message.findById(messageId);
+};
+
+export const updateMessage = async (messageId, content) => {
+  await Message.findByIdAndUpdate(messageId, { content });
+  return await Message.findById(messageId)
+    .populate("senderId", "username email")
+    .lean();
+};
+
+export const deleteMessage = async (messageId) => {
+  return await Message.findByIdAndDelete(messageId);
+};

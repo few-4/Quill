@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useEditor, EditorContent, Extension } from '@tiptap/react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
-import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { 
   Bold, 
   Italic, 
@@ -17,119 +15,9 @@ import {
   Redo2 
 } from 'lucide-react'
 
-// ─── Remote Cursor Decoration Plugin ────────────────────────────────────────
-const REMOTE_CURSOR_KEY = new PluginKey('remoteCursors');
-
-/**
- * Creates a ProseMirror plugin that renders colored caret lines + name labels
- * for each remote collaborator based on the externally managed cursor map.
- */
-function createRemoteCursorPlugin(getCursors) {
-  return new Plugin({
-    key: REMOTE_CURSOR_KEY,
-    props: {
-      decorations(state) {
-        const cursors = getCursors();
-        if (!cursors || Object.keys(cursors).length === 0) return DecorationSet.empty;
-
-        const decorations = [];
-        const docSize = state.doc.content.size;
-
-        Object.values(cursors).forEach((cursor) => {
-          const { from, to, color, username } = cursor;
-          if (from == null || from < 0 || from > docSize) return;
-
-          const clampedFrom = Math.min(Math.max(from, 0), docSize);
-          const clampedTo   = Math.min(Math.max(to ?? from, 0), docSize);
-
-          // ── Caret widget at `from` position ──
-          const caretEl = window.document.createElement('span');
-          caretEl.className = 'remote-cursor-caret';
-          caretEl.style.cssText = `
-            display: inline-block;
-            position: relative;
-            border-left: 2px solid ${color};
-            height: 1.2em;
-            margin-left: -1px;
-            vertical-align: text-bottom;
-            pointer-events: none;
-            z-index: 50;
-          `;
-
-          // Name label above caret
-          const labelEl = window.document.createElement('span');
-          labelEl.className = 'remote-cursor-label';
-          labelEl.textContent = username || '?';
-          labelEl.style.cssText = `
-            position: absolute;
-            top: -1.5em;
-            left: 0;
-            background: ${color};
-            color: #fff;
-            font-size: 10px;
-            font-weight: 700;
-            font-family: Inter, sans-serif;
-            white-space: nowrap;
-            padding: 1px 5px;
-            border-radius: 4px 4px 4px 0;
-            line-height: 1.6;
-            pointer-events: none;
-            z-index: 51;
-            letter-spacing: 0.02em;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.18);
-          `;
-          caretEl.appendChild(labelEl);
-
-          decorations.push(
-            Decoration.widget(clampedFrom, caretEl, { side: -1, key: `caret-${cursor.socketId}` })
-          );
-
-          // ── Selection highlight between from → to ──
-          if (clampedTo > clampedFrom) {
-            decorations.push(
-              Decoration.inline(clampedFrom, clampedTo, {
-                style: `background: ${color}26; border-radius: 2px;`,
-                class: 'remote-cursor-selection',
-              }, { key: `sel-${cursor.socketId}` })
-            );
-          }
-        });
-
-        return DecorationSet.create(state.doc, decorations);
-      },
-    },
-  });
-}
-
-/**
- * TipTap Extension that wires the ProseMirror remote-cursor plugin to the
- * editor. The extension holds a mutable ref to the latest cursor map so the
- * plugin can always read fresh data without being re-created.
- */
-const RemoteCursorExtension = Extension.create({
-  name: 'remoteCursors',
-
-  addOptions() {
-    return { getCursors: () => ({}) };
-  },
-
-  addProseMirrorPlugins() {
-    return [createRemoteCursorPlugin(this.options.getCursors)];
-  },
-});
-
-// ─── Component ───────────────────────────────────────────────────────────────
-
-const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCursors = {} }) => {
+const TipTapEditor = ({ content = null, onChange, socket, currentUser }) => {
   const [, forceUpdate] = useState(0);
-  const hasInitializedRef = useRef(false);
-  const remoteCursorsRef = useRef(remoteCursors);
   const isApplyingRemoteUpdateRef = useRef(false);
-
-  // Keep the ref always in sync so the plugin closure reads the latest cursors
-  useEffect(() => {
-    remoteCursorsRef.current = remoteCursors;
-  }, [remoteCursors]);
 
   const defaultJSONContent = {
     type: 'doc',
@@ -148,9 +36,6 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
           levels: [1, 2, 3],
         },
       }),
-      RemoteCursorExtension.configure({
-        getCursors: () => remoteCursorsRef.current,
-      }),
     ],
     content: content || defaultJSONContent,
     editorProps: {
@@ -159,45 +44,25 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
       },
     },
     onUpdate: ({ editor }) => {
+      if (isApplyingRemoteUpdateRef.current) return;
       if (onChange) {
         onChange(editor.getJSON());
       }
     },
-    onSelectionUpdate: ({ editor }) => {
-      // Don't broadcast our own cursor shift caused by a remote setContent call
-      if (!socket || isApplyingRemoteUpdateRef.current) return;
-      const { from, to } = editor.state.selection;
-      socket.emit('cursor-move', { from, to });
-    },
   });
 
-  // Force re-render when remoteCursors change so decorations get repainted
-  useEffect(() => {
-    if (!editor) return;
-    // Trigger a no-op transaction to force decoration re-evaluation
-    editor.view.updateState(editor.view.state);
-    forceUpdate(n => n + 1);
-  }, [remoteCursors, editor]);
-
-  // Structural synchronization of remote collaborative JSON updates while preserving selection
   useEffect(() => {
     if (editor && content) {
       const currentJSON = editor.getJSON();
       
-      // Compare serialized JSON structures to avoid infinite loop locks
       if (JSON.stringify(currentJSON) !== JSON.stringify(content)) {
         const { from, to } = editor.state.selection;
-        // Guard: suppress cursor-move emit that would fire from the selection
-        // change triggered by setContent, preventing phantom cursor jumps for others
         isApplyingRemoteUpdateRef.current = true;
         editor.commands.setContent(content, false);
         try {
           editor.commands.setTextSelection({ from, to });
         } catch (e) {
-          // Ignore selection restore if index is out of bounds after deletions
         }
-        // Clear after the current event-loop tick so the onSelectionUpdate
-        // callback (which fires synchronously) can read the flag
         setTimeout(() => {
           isApplyingRemoteUpdateRef.current = false;
         }, 0);
@@ -223,7 +88,6 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
     return null;
   }
 
-  // Active state style checker
   const buttons = [
     {
       icon: Bold,
@@ -305,14 +169,26 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
   return (
     <div className="w-full flex flex-col border border-theme-border/60 bg-theme-card/45 backdrop-blur-md rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
       
-      {/* Self-contained styling for TipTap components to bypass Tailwind Preflight resets */}
       <style>{`
         .ProseMirror {
           outline: none;
-          min-height: 450px;
+          min-height: 380px;
           width: 100%;
-          padding: 1.5rem;
+          padding: 0.75rem;
           position: relative;
+        }
+        @media (min-width: 640px) {
+          .ProseMirror {
+            padding: 1.5rem;
+            min-height: 450px;
+          }
+        }
+        .scrollbar-none::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-none {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
         .ProseMirror h1 {
           font-size: 2.25rem;
@@ -388,7 +264,6 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
           margin: 1rem 0;
           overflow-x: auto;
         }
-        /* Ensure remote cursor carets have correct stacking */
         .remote-cursor-caret {
           animation: cursor-blink 1.1s ease-in-out infinite;
         }
@@ -398,11 +273,10 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
         }
       `}</style>
 
-      {/* Editor custom Toolbar */}
-      <div className="bg-theme-card border-b border-theme-border/50 px-4 py-2.5 flex items-center flex-wrap gap-1 sticky top-0 z-10">
+      <div className="bg-theme-card border-b border-theme-border/50 px-3 py-2 flex items-center gap-1 sticky top-0 z-10 overflow-x-auto max-w-full whitespace-nowrap scrollbar-none md:flex-wrap md:px-4 md:py-2.5">
         {buttons.map((btn, idx) => {
           if (btn.type === 'divider') {
-            return <div key={idx} className="h-4 w-px bg-theme-border/50 mx-1.5" />
+            return <div key={idx} className="h-4 w-px bg-theme-border/50 mx-1.5 shrink-0" />
           }
           const Icon = btn.icon;
           return (
@@ -411,7 +285,7 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
               type="button"
               onClick={btn.action}
               disabled={btn.disabled}
-              className={`p-2 rounded-lg hover:bg-theme-btn-sec-hover theme-transition cursor-pointer ${
+              className={`p-2 rounded-lg hover:bg-theme-btn-sec-hover theme-transition cursor-pointer shrink-0 ${
                 btn.isActive 
                   ? 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20' 
                   : 'text-theme-txt-secondary hover:text-theme-txt-primary border border-transparent'
@@ -424,8 +298,7 @@ const TipTapEditor = ({ content = null, onChange, socket, currentUser, remoteCur
         })}
       </div>
 
-      {/* Editor Content Area */}
-      <div className="p-2 overflow-y-auto max-h-[600px] min-h-[450px] relative">
+      <div className="p-2 overflow-y-auto max-h-[600px] min-h-[380px] sm:min-h-[450px] relative">
         <EditorContent editor={editor} />
       </div>
 

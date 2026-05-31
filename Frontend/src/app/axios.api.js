@@ -10,15 +10,12 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request Interceptor
 api.interceptors.request.use(
   (config) => {
     const accessToken = store.getState().auth.accessToken;
-
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error),
@@ -35,24 +32,16 @@ const processQueue = (error, token = null) => {
       prom.resolve(token);
     }
   });
-
   failedQueue = [];
 };
 
-// Response Interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
-    // Avoid silent token refresh hijacking for auth/login/register endpoints
     const isAuthEndpoint = originalRequest.url && (
       originalRequest.url.includes("auth/login") ||
-      originalRequest.url.includes("auth/register") ||
-      originalRequest.url.includes("auth/verify-otp") ||
-      originalRequest.url.includes("auth/resend-otp") ||
-      originalRequest.url.includes("auth/forgot-password") ||
-      originalRequest.url.includes("auth/reset-password")
+      originalRequest.url.includes("auth/register")
     );
 
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
@@ -64,9 +53,7 @@ api.interceptors.response.use(
             originalRequest.headers.Authorization = `Bearer ${token}`;
             return api(originalRequest);
           })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
+          .catch((err) => Promise.reject(err));
       }
 
       originalRequest._retry = true;
@@ -76,19 +63,14 @@ api.interceptors.response.use(
         const response = await axios.post(
           `${API_BASE_URL}/auth/refresh-token`,
           {},
-          {
-            withCredentials: true,
-          },
+          { withCredentials: true },
         );
-
         const newAccessToken = response.data?.data?.token;
 
         if (newAccessToken) {
           store.dispatch(setAccessToken(newAccessToken));
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
           processQueue(null, newAccessToken);
-
           return api(originalRequest);
         }
       } catch (refreshError) {

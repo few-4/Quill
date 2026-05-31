@@ -89,7 +89,7 @@ const EditorHeader = ({
       <div className='flex items-center gap-3'>
         <button
           onClick={() => navigate(`/documents/${workspaceId}`)}
-          className='flex items-center gap-2 px-4 py-2.5 rounded-lg bg-theme-btn-sec-hover hover:bg-theme-border/50 text-theme-txt-primary text-sm font-semibold tracking-tight active:scale-[0.98] theme-transition shadow-xs cursor-pointer border border-theme-border/60'
+          className='flex items-center gap-1 md:gap-2 px-2.5 py-1.5 md:px-4 md:py-2.5 rounded-lg bg-theme-btn-sec-hover hover:bg-theme-border/50 text-theme-txt-primary text-xs md:text-sm font-semibold tracking-tight active:scale-[0.98] theme-transition shadow-xs cursor-pointer border border-theme-border/60'
         >
           Go Back
         </button>
@@ -103,7 +103,7 @@ const EditorHeader = ({
               onBlur={commitRename}
               onKeyDown={handleKeyDown}
               maxLength={60}
-              className='text-sm font-semibold text-theme-txt-primary bg-theme-metric border border-brand-blue/40 rounded-lg px-2.5 py-1 outline-none focus:ring-2 focus:ring-brand-blue/20 w-44 md:w-56 theme-transition'
+              className='text-xs md:text-sm font-semibold text-theme-txt-primary bg-theme-metric border border-brand-blue/40 rounded-lg px-2 py-1 outline-none focus:ring-2 focus:ring-brand-blue/20 w-24 sm:w-44 md:w-56 theme-transition'
             />
           ) : (
             <button
@@ -111,7 +111,7 @@ const EditorHeader = ({
               title="Click to rename document"
               className='flex items-center gap-1.5 group/title cursor-pointer'
             >
-              <h1 className='text-sm font-semibold text-theme-txt-primary truncate max-w-[160px] md:max-w-[240px] group-hover/title:text-brand-blue theme-transition'>
+              <h1 className='text-xs md:text-sm font-semibold text-theme-txt-primary truncate max-w-[80px] sm:max-w-[160px] md:max-w-[240px] group-hover/title:text-brand-blue theme-transition'>
                 {titleValue}
               </h1>
               <Pencil
@@ -136,7 +136,7 @@ const EditorHeader = ({
 
         <button
           onClick={() => navigate(`/dashboard/${workspaceId}`)}
-          className='flex items-center gap-2 px-4 py-2.5 rounded-lg bg-theme-btn-cta-bg text-theme-btn-cta-text text-sm font-semibold tracking-tight hover:opacity-90 active:scale-[0.98] theme-transition shadow-sm cursor-pointer border-none'
+          className='hidden md:flex items-center gap-2 px-4 py-2.5 rounded-lg bg-theme-btn-cta-bg text-theme-btn-cta-text text-sm font-semibold tracking-tight hover:opacity-90 active:scale-[0.98] theme-transition shadow-sm cursor-pointer border-none'
         >
           <span>Back to Dashboard</span>
         </button>

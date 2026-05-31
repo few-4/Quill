@@ -21,8 +21,6 @@ const ModalShell = ({ onClose, accentColor = 'blue', icon: Icon, title, subtitle
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-all duration-300 animate-in fade-in"
     >
       <div className="relative w-full max-w-md bg-theme-card border border-theme-border/80 rounded-2xl p-6 shadow-2xl flex flex-col items-stretch overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className={`absolute top-[-20%] right-[-20%] w-[180px] h-[180px] ${topGlow} rounded-full blur-[45px] pointer-events-none`} />
-        <div className={`absolute bottom-[-20%] left-[-20%] w-[180px] h-[180px] ${bottomGlow} rounded-full blur-[45px] pointer-events-none`} />
 
         <div className="flex items-center gap-3 mb-6 relative z-10">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg}`}>

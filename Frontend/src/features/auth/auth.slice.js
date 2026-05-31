@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const TOKEN_KEY = "quill_access_token";
 
-// Seed initial state from localStorage for session persistence across page refreshes
 const persistedToken = localStorage.getItem(TOKEN_KEY);
 
 export const authSlice = createSlice({
