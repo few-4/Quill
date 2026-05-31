@@ -20,15 +20,10 @@ const RefreshTokenSchema = new mongoose.Schema({
     }
 });
 
-RefreshTokenSchema.pre("save", async function (next) {
+RefreshTokenSchema.pre("save", async function () {
     if (this.isModified("token")) {
-        try {
-            this.token = await hashPassword(this.token);
-        } catch (error) {
-            return next(error);
-        }
+        this.token = await hashPassword(this.token);
     }
-    next();
 });
 
 const RefreshToken = mongoose.model("RefreshToken", RefreshTokenSchema);
