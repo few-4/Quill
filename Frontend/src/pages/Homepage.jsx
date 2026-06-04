@@ -149,7 +149,7 @@ const Homepage = () => {
             <img
               src={archPlanningImg}
               alt="Architecture & Planning Board Mockup"
-              className="w-full h-full object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+              className="w-full h-full object-cover object-medium group-hover:scale-[1.01] transition-transform duration-500"
             />
           </div>
 
