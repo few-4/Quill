@@ -31,8 +31,8 @@ export default function JoinWorkSpaceModal({ isVisible, onClose }) {
             id="invite-code"
             type="text"
             hasError={!!errors.inviteCode}
-            placeholder="e.g. A1B2C3D4E5"
-            className="uppercase"
+            placeholder="e.g. A1b2c-3a4E5"
+            className="px-2"
             {...register("inviteCode", {
               required: "Invite code is required",
               minLength: { value: 5, message: "Invite code must be at least 5 characters" },
