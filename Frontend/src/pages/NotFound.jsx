@@ -16,8 +16,8 @@ const NotFound = () => {
 
       <header className="w-full flex justify-between items-center px-12 py-6 absolute top-0 left-0 z-20">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-brand-blue/10 text-brand-blue shadow-inner shrink-0">
-            <QuillLogo className="w-5.5 h-5.5" />
+          <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-brand-blue/10 text-brand-blue shadow-inner shrink-0">
+            <QuillLogo className="w-10 h-10" />
           </div>
           <span className="text-xl font-bold tracking-tight bg-linear-to-r from-brand-blue to-brand-pink bg-clip-text text-transparent">
             Quill

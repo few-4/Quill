@@ -44,7 +44,7 @@ const AuthHeader = ({ authLinkTo, authLinkText }) => {
           to="/"
           className="text-xl font-bold tracking-tight text-theme-txt-primary flex items-center gap-2 hover:opacity-90 transition-opacity no-underline"
         >
-          <QuillLogo className="w-6.5 h-6.5" />
+          <QuillLogo className="w-10 h-10" />
           <span>Quill</span>
         </Link>
 

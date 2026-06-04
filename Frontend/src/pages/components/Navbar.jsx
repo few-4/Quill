@@ -48,7 +48,7 @@ export default function Navbar() {
         {}
         <div className="flex items-center gap-2">
           <Link to="/" className="text-xl font-bold tracking-tight text-theme-txt-primary flex items-center gap-2 hover:opacity-90 transition-opacity no-underline">
-            <QuillLogo className="w-6.5 h-6.5" />
+            <QuillLogo className="w-10 h-10" />
             <span>Quill</span>
           </Link>
         </div>
@@ -134,18 +134,20 @@ export default function Navbar() {
           ))}
           <hr className="border-theme-border my-2" />
           <div className="flex flex-col gap-4 pt-2">
-            <a 
-              href="#signin" 
+            <Link 
+              to="/sign-in" 
+              onClick={() => setIsOpen(false)}
               className="text-sm font-medium text-theme-txt-secondary hover:text-theme-txt-primary text-center theme-transition"
             >
               Sign In
-            </a>
-            <a
-              href="#get-started"
+            </Link>
+            <Link
+              to="/sign-up"
+              onClick={() => setIsOpen(false)}
               className="text-sm font-semibold bg-theme-btn-cta-bg text-theme-btn-cta-text px-4 py-2.5 rounded-md text-center shadow-md active:scale-[0.98] theme-transition"
             >
               Get Started
-            </a>
+            </Link>
           </div>
         </div>
       )}
