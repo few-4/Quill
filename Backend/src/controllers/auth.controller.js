@@ -77,8 +77,8 @@ export const loginUser = asyncHandler(async (req, res) => {
         }
     }
 
-    const refreshToken = await generateRefreshToken(user._id, user.email, user.username);
-    const accessToken = await generateAccessToken(user._id, user.email, user.username);
+    const refreshToken = generateRefreshToken(user._id, user.email, user.username);
+    const accessToken = generateAccessToken(user._id, user.email, user.username);
 
     const ua = new UAParser(req.headers['user-agent']).getResult();
     const deviceInfo = `${ua.browser.name || "Unknown Browser"} on ${ua.os.name || "Unknown OS"} ${ua.os.version || ""}`.trim();
@@ -139,4 +139,4 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     }
     return new ApiResponse(200, { userId: user._id, email: user.email, username: user.username, fullname: user.fullname }, "User fetched successfully").send(res);
 })
-
+
