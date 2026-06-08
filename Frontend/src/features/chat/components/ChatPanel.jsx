@@ -233,7 +233,7 @@ const ChatPanel = ({ workspaceId }) => {
                 return next;
               });
             }}
-            className="p-1.5 rounded-lg hover:bg-theme-btn-sec-hover text-theme-txt-secondary/60 hover:text-theme-txt-primary transition-all duration-200 cursor-pointer border-none bg-transparent flex items-center justify-center mr-1"
+            className="p-1.5 hidden lg:flex rounded-lg hover:bg-theme-btn-sec-hover text-theme-txt-secondary/60 hover:text-theme-txt-primary transition-all duration-200 cursor-pointer border-none bg-transparent items-center justify-center mr-1"
             title={isSidebarCollapsed ? "Show chat info sidebar" : "Hide chat info sidebar"}
           >
             {isSidebarCollapsed ? (
