@@ -76,7 +76,6 @@ $brand-green: #10b981;
   }
 }
 
-/* Beautiful dynamic text gradient for premium headings */
 .hero-text-gradient {
   background-image: linear-gradient(to right, var(--gradient-text-from), var(--gradient-text-via), var(--gradient-text-to));
   -webkit-background-clip: text;
@@ -95,12 +94,10 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Theme-aware transitions for elements */
 .theme-transition {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
-/* Modern vertical and horizontal square grid pattern */
 .grid-lines-bg {
   position: absolute;
   inset: 0;
@@ -116,7 +113,6 @@ body {
 }
 
 
-/* Premium Theme-Aware Global Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -129,7 +125,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb);
-  border: 2.5px solid var(--bg-primary); /* Beautiful padding offset effect */
+  border: 2.5px solid var(--bg-primary); 
   border-radius: 5px;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
@@ -138,13 +134,12 @@ body {
   background-color: var(--scrollbar-thumb-hover);
 }
 
-/* Firefox scrollbar compatibility */
+
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--bg-primary);
 }
 
-/* Autofill override to prevent background lit-up and text color changes */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
