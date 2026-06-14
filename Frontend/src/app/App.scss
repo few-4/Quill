@@ -20,59 +20,47 @@ $brand-green: #10b981;
   
   --cta-bg-gradient: radial-gradient(circle at center, rgba(255, 255, 255, 0.01) 0%, transparent 70%);
   
-  // Theme Toggle Custom Indicator Colors
   --toggle-btn-bg: #171717;
   --toggle-btn-hover: #262626;
-  
-  // Hero Gradient Text Colors
+
   --gradient-text-from: #e5e5e5;
   --gradient-text-via: #ffffff;
   --gradient-text-to: #a3a3a3;
-  
-  // Custom Scrollbar Colors
+
   --scrollbar-thumb: #262626;
   --scrollbar-thumb-hover: #404040;
 
   &.light {
-    
-    --bg-primary: #f5f5f4;       /* stone-100 */
-    --bg-secondary: #fafaf9;     /* stone-50 */
-    --bg-tertiary: #e7e5e4;      /* stone-200 */
+    --bg-primary: #f5f5f4;
+    --bg-secondary: #fafaf9;
+    --bg-tertiary: #e7e5e4;
     --bg-cta: #f0efed;
 
-    /* Text colors — near-black primary, medium warm gray secondary */
-    --text-primary: #1c1917;     /* stone-900 */
-    --text-secondary: #57534e;   /* stone-600 */
+    --text-primary: #1c1917;
+    --text-secondary: #57534e;
 
-    /* Borders — clearly visible warm gray */
-    --border-color: #c4bfbb;     /* stone-300-ish, noticeably visible */
+    --border-color: #c4bfbb;
     --grid-line-color: rgba(0, 0, 0, 0.06);
 
-    /* CTA button — dark charcoal bg, white text */
     --btn-cta-bg: #1c1917;
     --btn-cta-text: #fafaf9;
 
-    /* Secondary buttons — visible border + light hover */
-    --btn-sec-border: #a8a29e;   /* stone-400 */
-    --btn-sec-hover: #e7e5e4;    /* stone-200 */
+    --btn-sec-border: #a8a29e;
+    --btn-sec-hover: #e7e5e4;
 
-    /* Navbar — translucent warm white */
     --nav-bg: rgba(245, 245, 244, 0.88);
 
     --cta-bg-gradient: radial-gradient(circle at center, rgba(0, 0, 0, 0.02) 0%, transparent 70%);
 
-    /* Theme toggle */
     --toggle-btn-bg: #e7e5e4;
-    --toggle-btn-hover: #d6d3d1; /* stone-300 */
+    --toggle-btn-hover: #d6d3d1;
 
-    /* Hero gradient text — deep stone tones */
-    --gradient-text-from: #292524; /* stone-800 */
-    --gradient-text-via: #1c1917; /* stone-900 */
-    --gradient-text-to: #78716c;  /* stone-500 */
+    --gradient-text-from: #292524;
+    --gradient-text-via: #1c1917;
+    --gradient-text-to: #78716c;
 
-    /* Scrollbar */
-    --scrollbar-thumb: #a8a29e;  /* stone-400 */
-    --scrollbar-thumb-hover: #78716c; /* stone-500 */
+    --scrollbar-thumb: #a8a29e;
+    --scrollbar-thumb-hover: #78716c;
   }
 }
 

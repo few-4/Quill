@@ -8,7 +8,7 @@
   --color-brand-pink: #ec4899;
   --color-brand-green: #10b981;
   
-  /* Theme-aware semantic variables mapping to CSS properties */
+
   --color-theme-bg: var(--bg-primary);
   --color-theme-card: var(--bg-secondary);
   --color-theme-metric: var(--bg-tertiary);
